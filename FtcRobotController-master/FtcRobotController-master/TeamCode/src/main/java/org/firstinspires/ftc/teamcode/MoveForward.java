@@ -26,16 +26,16 @@ public class MoveForward extends OpMode {
         double encoderSpeed(double targetPosition, double maxSpeed){
             double AverageEncoderPosition = (RFMotor.getCurrentPosition() + LFMotor.getCurrentPosition() +RBMotor.getCurrentPosition()+ LBMotor.getCurrentPosition())/4;
             double distance = AverageEncoderPosition - targetPosition;
-            telemetry.addData("distance",distance);
-            double power = Range.clip((1/500)*distance, -maxSpeed, maxSpeed); // y = m*x + b
+            telemetry.addData("Encoder Speed distance",distance);
+            double power = Range.clip(distance/500, -maxSpeed, maxSpeed); // y = m*x + b
             return power;
         }
 
         public void setTurnPower(double turnPower, double power){
-            RFMotor.setPower(-turnPower - power);
-            LFMotor.setPower(turnPower - power);
-            RBMotor.setPower(-turnPower - power);
-            LBMotor.setPower(turnPower - power);
+            RFMotor.setPower(turnPower - power);
+            LFMotor.setPower(-turnPower - power);
+            RBMotor.setPower(turnPower - power);
+            LBMotor.setPower(-turnPower - power);
         }
 
         double getHeading(){
@@ -50,9 +50,7 @@ public class MoveForward extends OpMode {
             telemetry.addData("turnAngle", turnAngle);
             double power = Range.clip(turnAngle/50, -0.5, 0.5); // y = m*x + b
             return power;
-
         }
-
 
         public void rampUp(double distance, double heading, double time, double maxSpeed){
             double AccelerationSlope = maxSpeed/time;
@@ -71,11 +69,12 @@ public class MoveForward extends OpMode {
         LFMotor = hardwareMap.get(DcMotor.class, "LFMotor");
         RBMotor = hardwareMap.get(DcMotor.class, "RBMotor");
         LBMotor = hardwareMap.get(DcMotor.class, "LBMotor");
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
 
-        RFMotor.setDirection(DcMotor.Direction.REVERSE);
-        LFMotor.setDirection(DcMotor.Direction.FORWARD);
-        RBMotor.setDirection(DcMotor.Direction.REVERSE);
-        LBMotor.setDirection(DcMotor.Direction.FORWARD);
+        RFMotor.setDirection(DcMotor.Direction.FORWARD);
+        LFMotor.setDirection(DcMotor.Direction.REVERSE);
+        RBMotor.setDirection(DcMotor.Direction.FORWARD);
+        LBMotor.setDirection(DcMotor.Direction.REVERSE);
 
         telemetry.addData("status", "initialized");
 
@@ -95,7 +94,6 @@ public class MoveForward extends OpMode {
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
-
     }
 
     @Override
@@ -105,7 +103,8 @@ public class MoveForward extends OpMode {
         telemetry.addData("LB Distance", LBMotor.getCurrentPosition());
         telemetry.addData("RB Distance", RBMotor.getCurrentPosition());
 
-        angles = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        //gyro stuff
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         telemetry.addData("Heading: ", angles.firstAngle);
         telemetry.addData("Roll: ", angles.secondAngle);
         telemetry.addData("Pitch: ", angles.thirdAngle);
@@ -120,6 +119,12 @@ public class MoveForward extends OpMode {
 
     @Override
     public void loop(){
-        rampUp(1000.0, 0.0,0.5, 0.5 );
+        rampUp(100.0, 0.0,0.5, -0.5);
+
+        telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
+        telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
+        telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
+        telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
+        telemetry.update();
     }
 }

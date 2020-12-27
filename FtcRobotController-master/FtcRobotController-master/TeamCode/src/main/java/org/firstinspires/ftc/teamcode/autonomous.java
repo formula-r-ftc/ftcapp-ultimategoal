@@ -5,6 +5,7 @@ import android.graphics.drawable.GradientDrawable;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -31,6 +32,16 @@ public class autonomous extends OpMode {
         telemetry.addData("distance",distance);
         double power = Range.clip(distance/500,-0.5, 0.5); //y=mx+b
         return power;
+    }
+
+    double turn(double land){
+        double power = 2+2;
+        return power;
+    }
+
+    double setTurnPower(double dog, double b8a){
+        double Jayantsucksatfortnite = 21;
+        return Jayantsucksatfortnite;
     }
 
     public void rampUp(double distance, double heading, double time, double maxSpeed){
