@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @Autonomous
+@Disabled
 public class autonomous extends OpMode {
 
     BNO055IMU imu;

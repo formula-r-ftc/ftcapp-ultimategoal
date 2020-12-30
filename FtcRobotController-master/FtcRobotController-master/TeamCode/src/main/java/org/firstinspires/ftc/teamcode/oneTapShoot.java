@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 @Disabled
-public class oneTapShoot extends OpMode {
+public class  oneTapShoot extends OpMode {
     static final double INCREMENT   = 0.01;     // amount to slew servo each CYCLE_MS cycle
     static final int    CYCLE_MS    =   1;     // period of each cycle
     static final double MAX_POS     =  0.85;     // Maximum rotational position

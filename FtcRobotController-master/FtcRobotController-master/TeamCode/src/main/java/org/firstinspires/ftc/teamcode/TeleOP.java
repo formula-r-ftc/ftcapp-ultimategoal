@@ -17,12 +17,16 @@ public class TeleOP extends OpMode {
     private DcMotor Shooter;
     private Servo Pusher;
 
+    ElapsedTime t1 = new ElapsedTime();
+
+    boolean flyWeel = false;
+
    public void moveDriveTrain(){
        if(gamepad1.left_bumper){
-           LFMotor.setPower(0.4*(gamepad1.right_stick_y));
-           LBMotor.setPower(0.4*(gamepad1.right_stick_y));
-           RFMotor.setPower(0.4*(-gamepad1.left_stick_y));
-           RBMotor.setPower(0.4*(-gamepad1.left_stick_y));
+           LFMotor.setPower(0.6*(gamepad1.right_stick_y));
+           LBMotor.setPower(0.6*(gamepad1.right_stick_y));
+           RFMotor.setPower(0.6*(-gamepad1.left_stick_y));
+           RBMotor.setPower(0.6*(-gamepad1.left_stick_y));
        }else {
            LFMotor.setPower(gamepad1.right_stick_y);
            LBMotor.setPower(gamepad1.right_stick_y);
@@ -32,7 +36,14 @@ public class TeleOP extends OpMode {
    }
 
    public void shoot() {
-       Shooter.setPower(-gamepad1.right_trigger);
+       if (gamepad1.right_trigger > 0.5 && t1.seconds() > 0.5)
+           if (!flyWeel) {
+               Shooter.setPower(-1);
+                flyWeel = true;
+           } else if (flyWeel){
+                Shooter.setPower(0);
+                flyWeel = false;
+           }
    }
 
     public final void idle() {
