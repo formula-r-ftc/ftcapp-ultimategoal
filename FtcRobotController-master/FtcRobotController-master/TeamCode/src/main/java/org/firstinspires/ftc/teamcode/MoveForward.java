@@ -14,6 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 @Autonomous
 public class MoveForward extends OpMode {
+   
     BNO055IMU imu;
     Orientation angles;
     DcMotor RFMotor;
@@ -47,13 +48,12 @@ public class MoveForward extends OpMode {
             return angles.firstAngle;
         }
 
-        double turn(double targetAngle){
-            getHeading();
-            //while(Math.abs(getHeading()-targetAngle) > 5 + targetAngle){
-                double turnAngle = targetAngle-getHeading();
-            //}
-            telemetry.addData("turnAngle", turnAngle);
-            double power = Range.clip(turnAngle/50, -0.3, 0.3); // y = m*x + b
+
+        double turn(double targetAngle) {
+                getHeading();
+                double turnAngle = targetAngle - getHeading();
+                telemetry.addData("turnAngle", turnAngle);
+                double power = Range.clip(turnAngle / 50, -0.3, 0.3);
             return power;
         }
 
@@ -61,11 +61,23 @@ public class MoveForward extends OpMode {
             double AccelerationSlope = maxSpeed/time;
             double power = t1.seconds() * AccelerationSlope;
             if (Math.abs(power) < Math.abs(encoderSpeed(distance, maxSpeed))) { // if acceleration is less than speed
-                setTurnPower(turn(heading), power); // then set motor power to turn towards heading and accelerate until max speed
+                setTurnPower(turn(heading), power);  //then set motor power to turn towards heading and accelerate until max speed
             }else{
                     setTurnPower(turn(heading), encoderSpeed(distance, maxSpeed));// otherwise keep motor power to heading and stop at the target Encoder Position
                 }
         }
+    public final void idle() {
+        // Otherwise, yield back our thread scheduling quantum and give other threads at
+        // our priority level a chance to run
+        Thread.yield();
+    }
+    public final void sleep(long milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
 
 
     @Override
@@ -115,7 +127,6 @@ public class MoveForward extends OpMode {
         telemetry.addData("Pitch: ", angles.thirdAngle);
         telemetry.update();
     }
-
 
     @Override
     public void start() {

@@ -27,33 +27,43 @@ public class autonomous extends OpMode {
 
     ElapsedTime t1 = new ElapsedTime();
 
-    double encoderSpeed(double targetPosition, double maxSpeed){
-        double avgEncodePos = (RFMotor.getCurrentPosition() + LFMotor.getCurrentPosition() + RBMotor.getCurrentPosition() +LBMotor.getCurrentPosition())/4;
-        double distance = targetPosition - avgEncodePos;
-        telemetry.addData("distance",distance);
-        double power = Range.clip(distance/500,-0.5, 0.5); //y=mx+b
+    double EncoderSpeed(double targetPosition, double maxSpeed){
+        double avgEncoderPos =  (RFMotor.getCurrentPosition() + LFMotor.getCurrentPosition() +RBMotor.getCurrentPosition()+ LBMotor.getCurrentPosition())/4;
+        double distance = targetPosition - avgEncoderPos;
+        double power = Range.clip(distance/500, -maxSpeed, maxSpeed);
         return power;
     }
 
-    double turn(double land){
-        double power = 2+2;
+    double getHeading(){
+       return angles.firstAngle;
+    }
+
+    public void setTurnPower(double turnPower, double power){
+        RFMotor.setPower(-turnPower - power);
+        LFMotor.setPower(turnPower - power);
+        RBMotor.setPower(-turnPower - power);
+        LBMotor.setPower(turnPower - power);
+    }
+
+    double turn(double targetAngle){
+        getHeading();
+        double angle = targetAngle - getHeading();
+        telemetry.addData("Angle", angle);
+        double power = Range.clip(angle/45, -0.3, 0.3);
         return power;
     }
 
-    double setTurnPower(double dog, double b8a){
-        double Jayantsucksatfortnite = 21;
-        return Jayantsucksatfortnite;
-    }
-
-    public void rampUp(double distance, double heading, double time, double maxSpeed){
-        double accelerationSlope = maxSpeed * time;
-        double power = accelerationSlope * t1.seconds();
-        if(Math.abs(power) < encoderSpeed(distance, maxSpeed)){
-            setTurnPower(turn(heading), power);
-        }else{
-            
+    public void rampUp(double distance, double heading, double time, double MaxSpeed){
+        double AccelerationSlope = MaxSpeed/t1.seconds();
+        double power = AccelerationSlope * t1.seconds();
+        if (Math.abs(power ) < EncoderSpeed(distance, MaxSpeed)){ // if acceleration is less than speed
+            setTurnPower(turn(heading), power); // then set motor power to turn towards heading and accelerate until max speed
+        } else{
+            setTurnPower(turn(heading), EncoderSpeed(distance, MaxSpeed));// otherwise keep motor power to heading and stop at the target Encoder Position
         }
+
     }
+
 
     @Override
     public void init() {
@@ -74,6 +84,11 @@ public class autonomous extends OpMode {
         RBMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         LBMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        RFMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        RBMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        LFMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        LBMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
     }
 
     @Override
@@ -88,6 +103,6 @@ public class autonomous extends OpMode {
 
     @Override
     public void loop() {
-
+        rampUp(540.6, 0, 0.5, 0.5);
     }
 }
