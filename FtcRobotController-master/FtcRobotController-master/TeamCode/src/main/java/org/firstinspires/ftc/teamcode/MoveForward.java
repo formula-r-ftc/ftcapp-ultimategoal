@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 @Autonomous
 public class MoveForward extends OpMode {
-   
+
     BNO055IMU imu;
     Orientation angles;
     DcMotor RFMotor;
@@ -25,6 +25,7 @@ public class MoveForward extends OpMode {
     double one = 537.6;
 
     ElapsedTime t1 = new ElapsedTime();
+    ElapsedTime t2 = new ElapsedTime();
 
     //  this gives you the distance and speed of encoders
         double encoderSpeed(double targetPosition, double maxSpeed){
@@ -36,10 +37,10 @@ public class MoveForward extends OpMode {
         }
 
         public void setTurnPower(double turnPower, double power){
-            RFMotor.setPower(-turnPower - power);
-            LFMotor.setPower(turnPower - power);
-            RBMotor.setPower(-turnPower - power);
-            LBMotor.setPower(turnPower - power);
+            RFMotor.setPower(turnPower - power);
+            LFMotor.setPower(-turnPower - power);
+            RBMotor.setPower(turnPower - power);
+            LBMotor.setPower(-turnPower - power);
         }
 
         double getHeading(){
@@ -64,7 +65,7 @@ public class MoveForward extends OpMode {
                 setTurnPower(turn(heading), power);  //then set motor power to turn towards heading and accelerate until max speed
             }else{
                     setTurnPower(turn(heading), encoderSpeed(distance, maxSpeed));// otherwise keep motor power to heading and stop at the target Encoder Position
-                }
+            }
         }
     public final void idle() {
         // Otherwise, yield back our thread scheduling quantum and give other threads at
@@ -112,7 +113,7 @@ public class MoveForward extends OpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
     }
-
+// CH - Commented out for testing
     @Override
     public void init_loop() {
         telemetry.addData("LF Distance", LFMotor.getCurrentPosition());
@@ -131,16 +132,19 @@ public class MoveForward extends OpMode {
     @Override
     public void start() {
         t1.reset();
+        t2.reset();
     }
 
     @Override
     public void loop(){
         rampUp(537.6, 0.0,0.5, 0.2);
-
+        
         telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
         telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
         telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
         telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
         telemetry.update();
     }
+
+
 }
