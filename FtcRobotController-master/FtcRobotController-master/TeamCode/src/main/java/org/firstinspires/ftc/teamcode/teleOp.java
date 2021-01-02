@@ -49,11 +49,11 @@ public class teleOp extends OpMode {
     }
 
     public void shoot() {
-        if (gamepad1.right_trigger > 0.5 && t1.seconds() > 0.5)
+        if (gamepad1.right_trigger > 0.3 && t1.seconds() > 0.3)
             if (!flyWeel) {
                 Shooter.setPower(-1);
                 flyWeel = true;
-            } else if (flyWeel && gamepad1.right_trigger > 0.5 && t3.seconds() > 0.5){
+            } else if (flyWeel && gamepad1.right_trigger > 0.3 && t3.seconds() > 0.3){
                 Shooter.setPower(0);
                 flyWeel = false;
             }
@@ -105,30 +105,40 @@ public class teleOp extends OpMode {
         return angles.firstAngle;
     }
 
-    // To re-align the robot so its facing forwards and can shoot more accuratly towards the gaol
-//    public void reAlign(){
-//        getHeading();
-//        if (gamepad1.a) {
-//            while (Math.abs(getHeading()) > 3)
-//                if (getHeading() < 0) {
-//                    RFMotor.setPower(-0.3);
-//                    RBMotor.setPower(-0.3);
-//                }
-//            if (getHeading() > 0) {
-//                LFMotor.setPower(0.3);
-//                LBMotor.setPower(0.3);
-//            }
-//        }
-//    }
-
-    boolean ifPressed(boolean button){
+   /* private boolean ifPressed(boolean button){
         boolean output = false;
         int booleanIncrementer = 0;
-
+        if (booleanArray.size() == booleanIncrementer){
+            booleanArray.add(false);
+        }
+        boolean buttonWas = booleanArray.get(booleanIncrementer);
+        if (button != buttonWas && button == true){
+            output = true;
+        }
+        booleanArray.set(booleanIncrementer,button);
+        booleanIncrementer = booleanIncrementer +1;
         return output;
     }
+    private boolean ifPressedFloat(double button){
+        boolean output = false;
+        boolean buttonBoolean = false;
+        int booleanIncrementer = 0;
 
+        if (button >= 0.1){
+            buttonBoolean = true;
+        }
 
+        if (booleanArray.size() == booleanIncrementer){
+            booleanArray.add(false);
+        }
+        boolean buttonWas = booleanArray.get(booleanIncrementer);
+        if (buttonBoolean != buttonWas && buttonBoolean == true){
+            output = true;
+        }
+        booleanArray.set(booleanIncrementer,button);
+        booleanIncrementer = booleanIncrementer +1;
+        return output;
+    }*/
 
 
     @Override
