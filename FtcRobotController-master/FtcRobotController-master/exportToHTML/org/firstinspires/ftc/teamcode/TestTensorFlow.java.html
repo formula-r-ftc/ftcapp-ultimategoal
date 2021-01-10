@@ -1,0 +1,166 @@
+<html>
+<head>
+<title>TestTensorFlow.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #a9b7c6;}
+.s1 { color: #cc7832;}
+.s2 { color: #6a8759;}
+.s3 { color: #629755; font-style: italic;}
+.s4 { color: #629755; font-weight: bold; font-style: italic;}
+.s5 { color: #808080;}
+.s6 { color: #6897bb;}
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+TestTensorFlow.java</font>
+</center></td></tr></table>
+<pre><a name="l1"><span class="ln">1    </span></a>
+<a name="l2"><span class="ln">2    </span></a><span class="s1">package </span><span class="s0">org.firstinspires.ftc.robotcontroller.external.samples</span><span class="s1">;</span>
+<a name="l3"><span class="ln">3    </span></a>
+<a name="l4"><span class="ln">4    </span></a><span class="s1">import </span><span class="s0">com.qualcomm.robotcore.eventloop.opmode.Disabled</span><span class="s1">;</span>
+<a name="l5"><span class="ln">5    </span></a><span class="s1">import </span><span class="s0">com.qualcomm.robotcore.eventloop.opmode.LinearOpMode</span><span class="s1">;</span>
+<a name="l6"><span class="ln">6    </span></a><span class="s1">import </span><span class="s0">com.qualcomm.robotcore.eventloop.opmode.TeleOp</span><span class="s1">;</span>
+<a name="l7"><span class="ln">7    </span></a><span class="s1">import </span><span class="s0">java.util.List</span><span class="s1">;</span>
+<a name="l8"><span class="ln">8    </span></a><span class="s1">import </span><span class="s0">org.firstinspires.ftc.robotcore.external.ClassFactory</span><span class="s1">;</span>
+<a name="l9"><span class="ln">9    </span></a><span class="s1">import </span><span class="s0">org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName</span><span class="s1">;</span>
+<a name="l10"><span class="ln">10   </span></a><span class="s1">import </span><span class="s0">org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer</span><span class="s1">;</span>
+<a name="l11"><span class="ln">11   </span></a><span class="s1">import </span><span class="s0">org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector</span><span class="s1">;</span>
+<a name="l12"><span class="ln">12   </span></a><span class="s1">import </span><span class="s0">org.firstinspires.ftc.robotcore.external.tfod.Recognition</span><span class="s1">;</span>
+<a name="l13"><span class="ln">13   </span></a>
+<a name="l14"><span class="ln">14   </span></a><span class="s0">@TeleOp</span>
+<a name="l15"><span class="ln">15   </span></a>
+<a name="l16"><span class="ln">16   </span></a><span class="s1">public class </span><span class="s0">TestTensorFlow </span><span class="s1">extends </span><span class="s0">LinearOpMode {</span>
+<a name="l17"><span class="ln">17   </span></a>    <span class="s1">private static final </span><span class="s0">String TFOD_MODEL_ASSET = </span><span class="s2">&quot;UltimateGoal.tflite&quot;</span><span class="s1">;</span>
+<a name="l18"><span class="ln">18   </span></a>    <span class="s1">private static final </span><span class="s0">String LABEL_FIRST_ELEMENT = </span><span class="s2">&quot;Quad&quot;</span><span class="s1">;</span>
+<a name="l19"><span class="ln">19   </span></a>    <span class="s1">private static final </span><span class="s0">String LABEL_SECOND_ELEMENT = </span><span class="s2">&quot;Single&quot;</span><span class="s1">;</span>
+<a name="l20"><span class="ln">20   </span></a>
+<a name="l21"><span class="ln">21   </span></a>    <span class="s1">private static final </span><span class="s0">String VUFORIA_KEY =</span>
+<a name="l22"><span class="ln">22   </span></a>            <span class="s2">&quot;ASIwwWv/////AAABmR/+9d4sSkVEshzTIOkfUgAWTcQCqWQ3NeZFwrYj+HewIITQOcdzK95pLGiq3w+muSW12YMucPY4gr+LXUWae13of2pAVIwC03KapsTkznFaL5vJQvBSmir72Q0XFzO975UhES7phEj54qmV0HANvVXc9SVvzljLiSJvJt/6eDUEyqco/rUOnneZhEarLqZch8ma+TNUbWnNO4HnNu+E31xQVjR1ADGmSpln14EFvrLD22aWyGRFufLDPxMNZ0+HYMQg2rmyDK1HFxDnk6qpvtCYTjIXcLpUPXaDF5if3wIO3mDOaTk0OwdnBav9N1/bmwmYdEzjhRnTb7A8UCAnAUSxlAYIIH3WABg2FvfhQsRJ&quot;</span><span class="s1">;</span>
+<a name="l23"><span class="ln">23   </span></a>
+<a name="l24"><span class="ln">24   </span></a>    <span class="s3">/**</span>
+<a name="l25"><span class="ln">25   </span></a>     <span class="s3">* {</span><span class="s4">@link </span><span class="s3">#vuforia} is the variable we will use to store our instance of the Vuforia</span>
+<a name="l26"><span class="ln">26   </span></a>     <span class="s3">* localization engine.</span>
+<a name="l27"><span class="ln">27   </span></a>     <span class="s3">*/</span>
+<a name="l28"><span class="ln">28   </span></a>    <span class="s1">private </span><span class="s0">VuforiaLocalizer vuforia</span><span class="s1">;</span>
+<a name="l29"><span class="ln">29   </span></a>
+<a name="l30"><span class="ln">30   </span></a>    <span class="s3">/**</span>
+<a name="l31"><span class="ln">31   </span></a>     <span class="s3">* {</span><span class="s4">@link </span><span class="s3">#tfod} is the variable we will use to store our instance of the TensorFlow Object</span>
+<a name="l32"><span class="ln">32   </span></a>     <span class="s3">* Detection engine.</span>
+<a name="l33"><span class="ln">33   </span></a>     <span class="s3">*/</span>
+<a name="l34"><span class="ln">34   </span></a>    <span class="s1">private </span><span class="s0">TFObjectDetector tfod</span><span class="s1">;</span>
+<a name="l35"><span class="ln">35   </span></a>
+<a name="l36"><span class="ln">36   </span></a>    <span class="s0">@Override</span>
+<a name="l37"><span class="ln">37   </span></a>    <span class="s1">public void </span><span class="s0">runOpMode() {</span>
+<a name="l38"><span class="ln">38   </span></a>        <span class="s5">// The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that</span>
+<a name="l39"><span class="ln">39   </span></a>        <span class="s5">// first.</span>
+<a name="l40"><span class="ln">40   </span></a>        <span class="s0">initVuforia()</span><span class="s1">;</span>
+<a name="l41"><span class="ln">41   </span></a>        <span class="s0">initTfod()</span><span class="s1">;</span>
+<a name="l42"><span class="ln">42   </span></a>
+<a name="l43"><span class="ln">43   </span></a>        <span class="s3">/**</span>
+<a name="l44"><span class="ln">44   </span></a>         <span class="s3">* Activate TensorFlow Object Detection before we wait for the start command.</span>
+<a name="l45"><span class="ln">45   </span></a>         <span class="s3">* Do it here so that the Camera Stream window will have the TensorFlow annotations visible.</span>
+<a name="l46"><span class="ln">46   </span></a>         <span class="s3">**/</span>
+<a name="l47"><span class="ln">47   </span></a>        <span class="s1">if </span><span class="s0">(tfod != </span><span class="s1">null</span><span class="s0">) {</span>
+<a name="l48"><span class="ln">48   </span></a>            <span class="s0">tfod.activate()</span><span class="s1">;</span>
+<a name="l49"><span class="ln">49   </span></a>
+<a name="l50"><span class="ln">50   </span></a>            <span class="s5">// The TensorFlow software will scale the input images from the camera to a lower resolution.</span>
+<a name="l51"><span class="ln">51   </span></a>            <span class="s5">// This can result in lower detection accuracy at longer distances (&gt; 55cm or 22&quot;).</span>
+<a name="l52"><span class="ln">52   </span></a>            <span class="s5">// If your target is at distance greater than 50 cm (20&quot;) you can adjust the magnification value</span>
+<a name="l53"><span class="ln">53   </span></a>            <span class="s5">// to artificially zoom in to the center of image.  For best results, the &quot;aspectRatio&quot; argument</span>
+<a name="l54"><span class="ln">54   </span></a>            <span class="s5">// should be set to the value of the images used to create the TensorFlow Object Detection model</span>
+<a name="l55"><span class="ln">55   </span></a>            <span class="s5">// (typically 1.78 or 16/9).</span>
+<a name="l56"><span class="ln">56   </span></a>
+<a name="l57"><span class="ln">57   </span></a>            <span class="s5">// Uncomment the following line if you want to adjust the magnification and/or the aspect ratio of the input images.</span>
+<a name="l58"><span class="ln">58   </span></a>            <span class="s0">tfod.setZoom(</span><span class="s6">2.5</span><span class="s1">, </span><span class="s6">16.0</span><span class="s0">/</span><span class="s6">9.0</span><span class="s0">)</span><span class="s1">;</span>
+<a name="l59"><span class="ln">59   </span></a>        <span class="s0">}</span>
+<a name="l60"><span class="ln">60   </span></a>
+<a name="l61"><span class="ln">61   </span></a>
+<a name="l62"><span class="ln">62   </span></a>
+<a name="l63"><span class="ln">63   </span></a>        <span class="s3">/** Wait for the game to begin */</span>
+<a name="l64"><span class="ln">64   </span></a>        <span class="s0">telemetry.addData(</span><span class="s2">&quot;&gt;&quot;</span><span class="s1">, </span><span class="s2">&quot;Press Play to start op mode&quot;</span><span class="s0">)</span><span class="s1">;</span>
+<a name="l65"><span class="ln">65   </span></a>        <span class="s0">telemetry.update()</span><span class="s1">;</span>
+<a name="l66"><span class="ln">66   </span></a>        <span class="s0">waitForStart()</span><span class="s1">;</span>
+<a name="l67"><span class="ln">67   </span></a>
+<a name="l68"><span class="ln">68   </span></a>        <span class="s1">if </span><span class="s0">(opModeIsActive()) {</span>
+<a name="l69"><span class="ln">69   </span></a>            <span class="s1">while </span><span class="s0">(opModeIsActive()) {</span>
+<a name="l70"><span class="ln">70   </span></a>                <span class="s1">if </span><span class="s0">(tfod != </span><span class="s1">null</span><span class="s0">) {</span>
+<a name="l71"><span class="ln">71   </span></a>                    <span class="s5">// getUpdatedRecognitions() will return null if no new information is available since</span>
+<a name="l72"><span class="ln">72   </span></a>                    <span class="s5">// the last time that call was made.</span>
+<a name="l73"><span class="ln">73   </span></a>                    <span class="s0">List&lt;Recognition&gt; updatedRecognitions = tfod.getUpdatedRecognitions()</span><span class="s1">;</span>
+<a name="l74"><span class="ln">74   </span></a>                    <span class="s1">if </span><span class="s0">(updatedRecognitions != </span><span class="s1">null</span><span class="s0">) {</span>
+<a name="l75"><span class="ln">75   </span></a>                        <span class="s0">telemetry.addData(</span><span class="s2">&quot;# Object Detected&quot;</span><span class="s1">, </span><span class="s0">updatedRecognitions.size())</span><span class="s1">;</span>
+<a name="l76"><span class="ln">76   </span></a>                        <span class="s1">if </span><span class="s0">(updatedRecognitions.size() == </span><span class="s6">0</span><span class="s0">) {</span>
+<a name="l77"><span class="ln">77   </span></a>                            <span class="s5">//empty list. no objects recognized</span>
+<a name="l78"><span class="ln">78   </span></a>                            <span class="s0">telemetry.addData(</span><span class="s2">&quot;TFOD&quot;</span><span class="s1">,</span><span class="s2">&quot;No Items Detected&quot;</span><span class="s0">)</span><span class="s1">;</span>
+<a name="l79"><span class="ln">79   </span></a>                            <span class="s0">telemetry.addData(</span><span class="s2">&quot;TARGET ZONE&quot;</span><span class="s1">, </span><span class="s2">&quot;A&quot;</span><span class="s0">)</span><span class="s1">;</span>
+<a name="l80"><span class="ln">80   </span></a>                        <span class="s0">} </span><span class="s1">else </span><span class="s0">{</span>
+<a name="l81"><span class="ln">81   </span></a>                            <span class="s5">// list is not empty.</span>
+<a name="l82"><span class="ln">82   </span></a>                            <span class="s5">// step through the list of recognitions and display boundary info.</span>
+<a name="l83"><span class="ln">83   </span></a>                            <span class="s1">int </span><span class="s0">i = </span><span class="s6">0</span><span class="s1">;</span>
+<a name="l84"><span class="ln">84   </span></a>                            <span class="s1">for </span><span class="s0">(Recognition recognition : updatedRecognitions) {</span>
+<a name="l85"><span class="ln">85   </span></a>                                <span class="s0">telemetry.addData(String.format(</span><span class="s2">&quot;label (%d)&quot;</span><span class="s1">, </span><span class="s0">i)</span><span class="s1">, </span><span class="s0">recognition.getLabel())</span><span class="s1">;</span>
+<a name="l86"><span class="ln">86   </span></a>                                <span class="s0">telemetry.addData(String.format(</span><span class="s2">&quot;  left,top (%d)&quot;</span><span class="s1">, </span><span class="s0">i)</span><span class="s1">, </span><span class="s2">&quot;%.03f , %.03f&quot;</span><span class="s1">,</span>
+<a name="l87"><span class="ln">87   </span></a>                                        <span class="s0">recognition.getLeft()</span><span class="s1">, </span><span class="s0">recognition.getTop())</span><span class="s1">;</span>
+<a name="l88"><span class="ln">88   </span></a>                                <span class="s0">telemetry.addData(String.format(</span><span class="s2">&quot;  right,bottom (%d)&quot;</span><span class="s1">, </span><span class="s0">i)</span><span class="s1">, </span><span class="s2">&quot;%.03f , %.03f&quot;</span><span class="s1">,</span>
+<a name="l89"><span class="ln">89   </span></a>                                        <span class="s0">recognition.getRight()</span><span class="s1">, </span><span class="s0">recognition.getBottom())</span><span class="s1">;</span>
+<a name="l90"><span class="ln">90   </span></a>
+<a name="l91"><span class="ln">91   </span></a>                                <span class="s5">// check label to see which target zone to go after.</span>
+<a name="l92"><span class="ln">92   </span></a>                                <span class="s1">if </span><span class="s0">(recognition.getLabel().equals(</span><span class="s2">&quot;Single&quot;</span><span class="s0">)) {</span>
+<a name="l93"><span class="ln">93   </span></a>                                    <span class="s0">telemetry.addData(</span><span class="s2">&quot;Target Zone&quot;</span><span class="s1">, </span><span class="s2">&quot;B&quot;</span><span class="s0">)</span><span class="s1">;</span>
+<a name="l94"><span class="ln">94   </span></a>                                <span class="s0">} </span><span class="s1">else if </span><span class="s0">(recognition.getLabel().equals(</span><span class="s2">&quot;Quad&quot;</span><span class="s0">)) {</span>
+<a name="l95"><span class="ln">95   </span></a>                                    <span class="s0">telemetry.addData(</span><span class="s2">&quot;Target Zone&quot;</span><span class="s1">, </span><span class="s2">&quot;C&quot;</span><span class="s0">)</span><span class="s1">;</span>
+<a name="l96"><span class="ln">96   </span></a>                                <span class="s0">} </span><span class="s1">else </span><span class="s0">{</span>
+<a name="l97"><span class="ln">97   </span></a>                                    <span class="s0">telemetry.addData(</span><span class="s2">&quot;Target Zone&quot;</span><span class="s1">, </span><span class="s2">&quot;UNKNOWN&quot;</span><span class="s0">)</span><span class="s1">;</span>
+<a name="l98"><span class="ln">98   </span></a>                                <span class="s0">}</span>
+<a name="l99"><span class="ln">99   </span></a>                            <span class="s0">}</span>
+<a name="l100"><span class="ln">100  </span></a>                        <span class="s0">}</span>
+<a name="l101"><span class="ln">101  </span></a>
+<a name="l102"><span class="ln">102  </span></a>                        <span class="s0">telemetry.update()</span><span class="s1">;</span>
+<a name="l103"><span class="ln">103  </span></a>                    <span class="s0">}</span>
+<a name="l104"><span class="ln">104  </span></a>                <span class="s0">}</span>
+<a name="l105"><span class="ln">105  </span></a>            <span class="s0">}</span>
+<a name="l106"><span class="ln">106  </span></a>        <span class="s0">}</span>
+<a name="l107"><span class="ln">107  </span></a>
+<a name="l108"><span class="ln">108  </span></a>        <span class="s1">if </span><span class="s0">(tfod != </span><span class="s1">null</span><span class="s0">) {</span>
+<a name="l109"><span class="ln">109  </span></a>            <span class="s0">tfod.shutdown()</span><span class="s1">;</span>
+<a name="l110"><span class="ln">110  </span></a>        <span class="s0">}</span>
+<a name="l111"><span class="ln">111  </span></a>    <span class="s0">}</span>
+<a name="l112"><span class="ln">112  </span></a>
+<a name="l113"><span class="ln">113  </span></a>    <span class="s3">/**</span>
+<a name="l114"><span class="ln">114  </span></a>     <span class="s3">* Initialize the Vuforia localization engine.</span>
+<a name="l115"><span class="ln">115  </span></a>     <span class="s3">*/</span>
+<a name="l116"><span class="ln">116  </span></a>    <span class="s1">private void </span><span class="s0">initVuforia() {</span>
+<a name="l117"><span class="ln">117  </span></a>        <span class="s5">/* 
+<a name="l118"><span class="ln">118  </span></a>         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine. 
+<a name="l119"><span class="ln">119  </span></a>         */</span>
+<a name="l120"><span class="ln">120  </span></a>        <span class="s0">VuforiaLocalizer.Parameters parameters = </span><span class="s1">new </span><span class="s0">VuforiaLocalizer.Parameters()</span><span class="s1">;</span>
+<a name="l121"><span class="ln">121  </span></a>
+<a name="l122"><span class="ln">122  </span></a>        <span class="s0">parameters.vuforiaLicenseKey = VUFORIA_KEY</span><span class="s1">;</span>
+<a name="l123"><span class="ln">123  </span></a>        <span class="s0">parameters.cameraName = hardwareMap.get(WebcamName.</span><span class="s1">class, </span><span class="s2">&quot;Webcam 1&quot;</span><span class="s0">)</span><span class="s1">;</span>
+<a name="l124"><span class="ln">124  </span></a>
+<a name="l125"><span class="ln">125  </span></a>        <span class="s5">//  Instantiate the Vuforia engine</span>
+<a name="l126"><span class="ln">126  </span></a>        <span class="s0">vuforia = ClassFactory.getInstance().createVuforia(parameters)</span><span class="s1">;</span>
+<a name="l127"><span class="ln">127  </span></a>
+<a name="l128"><span class="ln">128  </span></a>        <span class="s5">// Loading trackables is not necessary for the TensorFlow Object Detection engine.</span>
+<a name="l129"><span class="ln">129  </span></a>    <span class="s0">}</span>
+<a name="l130"><span class="ln">130  </span></a>
+<a name="l131"><span class="ln">131  </span></a>    <span class="s3">/**</span>
+<a name="l132"><span class="ln">132  </span></a>     <span class="s3">* Initialize the TensorFlow Object Detection engine.</span>
+<a name="l133"><span class="ln">133  </span></a>     <span class="s3">*/</span>
+<a name="l134"><span class="ln">134  </span></a>    <span class="s1">private void </span><span class="s0">initTfod() {</span>
+<a name="l135"><span class="ln">135  </span></a>        <span class="s1">int </span><span class="s0">tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(</span>
+<a name="l136"><span class="ln">136  </span></a>                <span class="s2">&quot;tfodMonitorViewId&quot;</span><span class="s1">, </span><span class="s2">&quot;id&quot;</span><span class="s1">, </span><span class="s0">hardwareMap.appContext.getPackageName())</span><span class="s1">;</span>
+<a name="l137"><span class="ln">137  </span></a>        <span class="s0">TFObjectDetector.Parameters tfodParameters = </span><span class="s1">new </span><span class="s0">TFObjectDetector.Parameters(tfodMonitorViewId)</span><span class="s1">;</span>
+<a name="l138"><span class="ln">138  </span></a>        <span class="s0">tfodParameters.minResultConfidence = </span><span class="s6">0.8f</span><span class="s1">;</span>
+<a name="l139"><span class="ln">139  </span></a>        <span class="s0">tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters</span><span class="s1">, </span><span class="s0">vuforia)</span><span class="s1">;</span>
+<a name="l140"><span class="ln">140  </span></a>        <span class="s0">tfod.loadModelFromAsset(TFOD_MODEL_ASSET</span><span class="s1">, </span><span class="s0">LABEL_FIRST_ELEMENT</span><span class="s1">, </span><span class="s0">LABEL_SECOND_ELEMENT)</span><span class="s1">;</span>
+<a name="l141"><span class="ln">141  </span></a>    <span class="s0">}</span>
+<a name="l142"><span class="ln">142  </span></a><span class="s0">}</span>
+<a name="l143"><span class="ln">143  </span></a></pre>
+</body>
+</html>

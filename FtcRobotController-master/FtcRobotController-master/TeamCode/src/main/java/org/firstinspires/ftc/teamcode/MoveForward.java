@@ -25,15 +25,15 @@ public class MoveForward extends OpMode {
     double one = 537.6;
 
     ElapsedTime t1 = new ElapsedTime();
-    ElapsedTime t2 = new ElapsedTime();
+    ElapsedTime runtime = new ElapsedTime();
 
     //  this gives you the distance and speed of encoders
         double encoderSpeed(double targetPosition, double maxSpeed){
             double AverageEncoderPosition = (RFMotor.getCurrentPosition() + LFMotor.getCurrentPosition() +RBMotor.getCurrentPosition()+ LBMotor.getCurrentPosition())/4;
             double distance = targetPosition - AverageEncoderPosition;
-            telemetry.addData("Encoder Speed distance",distance);
-            double power = Range.clip(distance/500, -maxSpeed, maxSpeed); // y = m*x + b
-            return power;
+            //telemetry.addData("Encoder Speed distance",distance);
+            double speed = Range.clip(distance/500, -maxSpeed, maxSpeed); // clip the speed
+            return speed;
         }
 
         public void setTurnPower(double turnPower, double power){
@@ -53,20 +53,54 @@ public class MoveForward extends OpMode {
         double turn(double targetAngle) {
                 getHeading();
                 double turnAngle = targetAngle - getHeading();
-                telemetry.addData("turnAngle", turnAngle);
+               // telemetry.addData("turnAngle", turnAngle);
                 double power = Range.clip(turnAngle / 50, -0.3, 0.3);
             return power;
         }
 
-        public void rampUp(double distance, double heading, double time, double maxSpeed){
-            double AccelerationSlope = maxSpeed/time;
+        public void rampUp(double distance, double heading, double time, double maxSpeed, double busyTime) {
+            double AccelerationSlope = maxSpeed / time;
             double power = t1.seconds() * AccelerationSlope;
             if (Math.abs(power) < Math.abs(encoderSpeed(distance, maxSpeed))) { // if acceleration is less than speed
                 setTurnPower(turn(heading), power);  //then set motor power to turn towards heading and accelerate until max speed
-            }else{
+            } else {
+                if (runtime.seconds() < busyTime) {
+                    telemetry.addData("motor is: ", "busy");
                     setTurnPower(turn(heading), encoderSpeed(distance, maxSpeed));// otherwise keep motor power to heading and stop at the target Encoder Position
+                } else {
+                    telemetry.addData("motor is: ", "not busy");
+                RFMotor.setPower(0);
+                LFMotor.setPower(0);
+                RBMotor.setPower(0);
+                LBMotor.setPower(0);
+                    setTurnPower(0,0);
+                }
             }
         }
+
+        boolean tripLoopDone = false;
+        boolean EncoderPower;
+        boolean tripLoop(){
+            double AverageEncPower = (RFMotor.getPower() + LFMotor.getPower() + RBMotor.getPower() + LBMotor.getPower())/4;
+
+            if (AverageEncPower == 0){
+                EncoderPower = false;
+            } else{
+                EncoderPower = true;
+            }
+
+            if (!tripLoopDone && EncoderPower){
+                tripLoopDone = true;
+            }
+
+            if (tripLoopDone && !EncoderPower){
+                return  true;
+            }
+            else {
+                return false;
+            }
+        }
+
     public final void idle() {
         // Otherwise, yield back our thread scheduling quantum and give other threads at
         // our priority level a chance to run
@@ -113,7 +147,7 @@ public class MoveForward extends OpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
     }
-// CH - Commented out for testing
+
     @Override
     public void init_loop() {
         telemetry.addData("LF Distance", LFMotor.getCurrentPosition());
@@ -128,23 +162,33 @@ public class MoveForward extends OpMode {
         telemetry.addData("Pitch: ", angles.thirdAngle);
         telemetry.update();
     }
-
     @Override
     public void start() {
         t1.reset();
-        t2.reset();
+        runtime.reset();
     }
-
+    boolean vaari = false;
+    boolean melinda = false;
+    boolean sri = false;
     @Override
     public void loop(){
-        rampUp(537.6, 0.0,0.5, 0.2);
-        
+        if (!vaari) {
+        rampUp(2*one, 0, 0.5, 0.5, 5);
+        vaari = tripLoop();
+        }else if(vaari) {
+        rampUp(one,90, 0.5, 0.2, 10);
+        melinda = tripLoop();
+        } else if (melinda){
+            rampUp(one, 90, 0.5, 0.3, 15);
+            sri = tripLoop();
+        }
+
+
+        telemetry.addData("Runtime: ", runtime.seconds());
         telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
-        telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
-        telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
-        telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
+        telemetry.addData("LFMotor encoder:", LFMotor.getCurrentPosition());
+        telemetry.addData("RBMotor encoder:", RBMotor.getCurrentPosition());
+        telemetry.addData("LBMotor encoder:", LBMotor.getCurrentPosition());
         telemetry.update();
     }
-
-
 }

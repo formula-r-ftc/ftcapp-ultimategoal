@@ -1,0 +1,112 @@
+<html>
+<head>
+<title>oneTapShoot.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6897bb;}
+.s3 { color: #808080;}
+.s4 { color: #6a8759;}
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+oneTapShoot.java</font>
+</center></td></tr></table>
+<pre><a name="l1"><span class="ln">1    </span></a><span class="s0">package </span><span class="s1">org.firstinspires.ftc.teamcode</span><span class="s0">;</span>
+<a name="l2"><span class="ln">2    </span></a>
+<a name="l3"><span class="ln">3    </span></a><span class="s0">import </span><span class="s1">com.qualcomm.robotcore.eventloop.opmode.Disabled</span><span class="s0">;</span>
+<a name="l4"><span class="ln">4    </span></a><span class="s0">import </span><span class="s1">com.qualcomm.robotcore.eventloop.opmode.OpMode</span><span class="s0">;</span>
+<a name="l5"><span class="ln">5    </span></a><span class="s0">import </span><span class="s1">com.qualcomm.robotcore.eventloop.opmode.TeleOp</span><span class="s0">;</span>
+<a name="l6"><span class="ln">6    </span></a><span class="s0">import </span><span class="s1">com.qualcomm.robotcore.hardware.Servo</span><span class="s0">;</span>
+<a name="l7"><span class="ln">7    </span></a>
+<a name="l8"><span class="ln">8    </span></a><span class="s1">@TeleOp</span>
+<a name="l9"><span class="ln">9    </span></a><span class="s1">@Disabled</span>
+<a name="l10"><span class="ln">10   </span></a><span class="s0">public class  </span><span class="s1">oneTapShoot </span><span class="s0">extends </span><span class="s1">OpMode {</span>
+<a name="l11"><span class="ln">11   </span></a>    <span class="s0">static final double </span><span class="s1">INCREMENT   = </span><span class="s2">0.01</span><span class="s0">;     </span><span class="s3">// amount to slew servo each CYCLE_MS cycle</span>
+<a name="l12"><span class="ln">12   </span></a>    <span class="s0">static final int    </span><span class="s1">CYCLE_MS    =   </span><span class="s2">1</span><span class="s0">;     </span><span class="s3">// period of each cycle</span>
+<a name="l13"><span class="ln">13   </span></a>    <span class="s0">static final double </span><span class="s1">MAX_POS     =  </span><span class="s2">0.85</span><span class="s0">;     </span><span class="s3">// Maximum rotational position</span>
+<a name="l14"><span class="ln">14   </span></a>    <span class="s0">static final double </span><span class="s1">MIN_POS     =  </span><span class="s2">0.3</span><span class="s0">;     </span><span class="s3">// Minimum rotational position</span>
+<a name="l15"><span class="ln">15   </span></a>
+<a name="l16"><span class="ln">16   </span></a>    <span class="s3">// Define class members</span>
+<a name="l17"><span class="ln">17   </span></a>    <span class="s1">Servo Pusher</span><span class="s0">;</span>
+<a name="l18"><span class="ln">18   </span></a>    <span class="s0">double  </span><span class="s1">position = (MAX_POS - MIN_POS) / </span><span class="s2">2</span><span class="s0">; </span><span class="s3">// Start at halfway position</span>
+<a name="l19"><span class="ln">19   </span></a>    <span class="s0">boolean </span><span class="s1">rampUp = </span><span class="s0">true;</span>
+<a name="l20"><span class="ln">20   </span></a>
+<a name="l21"><span class="ln">21   </span></a>    <span class="s0">public final void </span><span class="s1">idle() {</span>
+<a name="l22"><span class="ln">22   </span></a>        <span class="s3">// Otherwise, yield back our thread scheduling quantum and give other threads at</span>
+<a name="l23"><span class="ln">23   </span></a>        <span class="s3">// our priority level a chance to run</span>
+<a name="l24"><span class="ln">24   </span></a>        <span class="s1">Thread.yield()</span><span class="s0">;</span>
+<a name="l25"><span class="ln">25   </span></a>    <span class="s1">}</span>
+<a name="l26"><span class="ln">26   </span></a>    <span class="s0">public final void </span><span class="s1">sleep(</span><span class="s0">long </span><span class="s1">milliseconds) {</span>
+<a name="l27"><span class="ln">27   </span></a>        <span class="s0">try </span><span class="s1">{</span>
+<a name="l28"><span class="ln">28   </span></a>            <span class="s1">Thread.sleep(milliseconds)</span><span class="s0">;</span>
+<a name="l29"><span class="ln">29   </span></a>        <span class="s1">} </span><span class="s0">catch </span><span class="s1">(InterruptedException e) {</span>
+<a name="l30"><span class="ln">30   </span></a>            <span class="s1">Thread.currentThread().interrupt()</span><span class="s0">;</span>
+<a name="l31"><span class="ln">31   </span></a>        <span class="s1">}</span>
+<a name="l32"><span class="ln">32   </span></a>    <span class="s1">}</span>
+<a name="l33"><span class="ln">33   </span></a>
+<a name="l34"><span class="ln">34   </span></a>    <span class="s0">public void </span><span class="s1">push() {</span>
+<a name="l35"><span class="ln">35   </span></a>        <span class="s0">if </span><span class="s1">(gamepad1.right_bumper) {</span>
+<a name="l36"><span class="ln">36   </span></a>            <span class="s0">if </span><span class="s1">(rampUp) {</span>
+<a name="l37"><span class="ln">37   </span></a>                <span class="s3">// Keep stepping up until we hit the max value.</span>
+<a name="l38"><span class="ln">38   </span></a>                <span class="s1">position += INCREMENT</span><span class="s0">;</span>
+<a name="l39"><span class="ln">39   </span></a>                <span class="s0">if </span><span class="s1">(position &gt;= MAX_POS) {</span>
+<a name="l40"><span class="ln">40   </span></a>                    <span class="s1">position = MAX_POS</span><span class="s0">;</span>
+<a name="l41"><span class="ln">41   </span></a>                    <span class="s1">rampUp = !rampUp</span><span class="s0">;   </span><span class="s3">// Switch ramp direction</span>
+<a name="l42"><span class="ln">42   </span></a>                <span class="s1">}</span>
+<a name="l43"><span class="ln">43   </span></a>            <span class="s1">}</span>
+<a name="l44"><span class="ln">44   </span></a>            <span class="s1">Pusher.setPosition(position)</span><span class="s0">;</span>
+<a name="l45"><span class="ln">45   </span></a>        <span class="s1">}</span>
+<a name="l46"><span class="ln">46   </span></a>
+<a name="l47"><span class="ln">47   </span></a>            <span class="s0">else </span><span class="s1">{</span>
+<a name="l48"><span class="ln">48   </span></a>                <span class="s3">// Keep stepping down until we hit the min value.</span>
+<a name="l49"><span class="ln">49   </span></a>                <span class="s1">position -= INCREMENT</span><span class="s0">;</span>
+<a name="l50"><span class="ln">50   </span></a>                <span class="s0">if </span><span class="s1">(position &lt;= MIN_POS) {</span>
+<a name="l51"><span class="ln">51   </span></a>                    <span class="s1">position = MIN_POS</span><span class="s0">;</span>
+<a name="l52"><span class="ln">52   </span></a>                    <span class="s1">rampUp = !rampUp</span><span class="s0">;  </span><span class="s3">// Switch ramp direction</span>
+<a name="l53"><span class="ln">53   </span></a>                <span class="s1">}</span>
+<a name="l54"><span class="ln">54   </span></a>            <span class="s1">}</span>
+<a name="l55"><span class="ln">55   </span></a>            <span class="s3">// Set the servo to the new position and pause;</span>
+<a name="l56"><span class="ln">56   </span></a>            <span class="s1">Pusher.setPosition(position)</span><span class="s0">;</span>
+<a name="l57"><span class="ln">57   </span></a>            <span class="s1">sleep(CYCLE_MS)</span><span class="s0">;</span>
+<a name="l58"><span class="ln">58   </span></a>            <span class="s1">idle()</span><span class="s0">;</span>
+<a name="l59"><span class="ln">59   </span></a>    <span class="s1">}</span>
+<a name="l60"><span class="ln">60   </span></a>
+<a name="l61"><span class="ln">61   </span></a>    <span class="s1">@Override</span>
+<a name="l62"><span class="ln">62   </span></a>    <span class="s0">public void </span><span class="s1">init() {</span>
+<a name="l63"><span class="ln">63   </span></a>        <span class="s3">// Connect to servo (Assume PushBot Left Hand)</span>
+<a name="l64"><span class="ln">64   </span></a>        <span class="s3">// Change the text in quotes to match any servo name on your robot.</span>
+<a name="l65"><span class="ln">65   </span></a>        <span class="s1">Pusher = hardwareMap.get(Servo.</span><span class="s0">class, </span><span class="s4">&quot;Pusher&quot;</span><span class="s1">)</span><span class="s0">;</span>
+<a name="l66"><span class="ln">66   </span></a>    <span class="s1">}</span>
+<a name="l67"><span class="ln">67   </span></a>
+<a name="l68"><span class="ln">68   </span></a>    <span class="s1">@Override</span>
+<a name="l69"><span class="ln">69   </span></a>    <span class="s0">public void </span><span class="s1">init_loop() {</span>
+<a name="l70"><span class="ln">70   </span></a>        <span class="s3">// Wait for the start button</span>
+<a name="l71"><span class="ln">71   </span></a>        <span class="s1">telemetry.addData(</span><span class="s4">&quot;&gt;&quot;</span><span class="s0">, </span><span class="s4">&quot;Press Start to scan Servo.&quot; </span><span class="s1">)</span><span class="s0">;</span>
+<a name="l72"><span class="ln">72   </span></a>        <span class="s1">telemetry.update()</span><span class="s0">;</span>
+<a name="l73"><span class="ln">73   </span></a>    <span class="s1">}</span>
+<a name="l74"><span class="ln">74   </span></a>
+<a name="l75"><span class="ln">75   </span></a>    <span class="s1">@Override</span>
+<a name="l76"><span class="ln">76   </span></a>    <span class="s0">public void </span><span class="s1">start(){</span>
+<a name="l77"><span class="ln">77   </span></a>
+<a name="l78"><span class="ln">78   </span></a>    <span class="s1">}</span>
+<a name="l79"><span class="ln">79   </span></a>
+<a name="l80"><span class="ln">80   </span></a>    <span class="s1">@Override</span>
+<a name="l81"><span class="ln">81   </span></a>    <span class="s0">public void </span><span class="s1">loop() {</span>
+<a name="l82"><span class="ln">82   </span></a>
+<a name="l83"><span class="ln">83   </span></a>        <span class="s1">push()</span><span class="s0">;</span>
+<a name="l84"><span class="ln">84   </span></a>        <span class="s3">// Display the current value</span>
+<a name="l85"><span class="ln">85   </span></a>        <span class="s1">telemetry.addData(</span><span class="s4">&quot;Servo Position&quot;</span><span class="s0">, </span><span class="s4">&quot;%5.2f&quot;</span><span class="s0">, </span><span class="s1">position)</span><span class="s0">;</span>
+<a name="l86"><span class="ln">86   </span></a>        <span class="s1">telemetry.addData(</span><span class="s4">&quot;&gt;&quot;</span><span class="s0">, </span><span class="s4">&quot;Press Stop to end test.&quot; </span><span class="s1">)</span><span class="s0">;</span>
+<a name="l87"><span class="ln">87   </span></a>        <span class="s1">telemetry.update()</span><span class="s0">;</span>
+<a name="l88"><span class="ln">88   </span></a>
+<a name="l89"><span class="ln">89   </span></a>    <span class="s1">}</span>
+<a name="l90"><span class="ln">90   </span></a><span class="s1">}</span>
+<a name="l91"><span class="ln">91   </span></a></pre>
+</body>
+</html>
