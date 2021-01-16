@@ -29,6 +29,8 @@ public class teleOp extends OpMode {
     private DcMotor Shooter;
     private Servo Pusher;
     private DcMotor slides;
+    private DcMotor slides2;
+    private DcMotor intake;
 
     ElapsedTime t1 = new ElapsedTime();
     ElapsedTime t2 = new ElapsedTime();
@@ -63,8 +65,8 @@ public class teleOp extends OpMode {
         boolean g1rtPressed = ifPressedFloat(g1rt);
 
         if(g1rtPressed && Shooter.getPower() == 0.0){
-            Shooter.setPower(-1);
-        }else if (gamepad1.right_trigger > 0.1 && t1.seconds() > 0.1){
+            Shooter.setPower(0.9);
+        }else if (gamepad1.right_trigger > 0.4 && t1.seconds() > 0.4){
             Shooter.setPower(0);
         }
 
@@ -100,10 +102,10 @@ public class teleOp extends OpMode {
                 for (int i=0; i<3; i++){
                     telemetry.addData("Counter is", "push " + i);
                     telemetry.update();
-                    Pusher.setPosition(0.27);
-                    sleep(330);
+                    Pusher.setPosition(0.2);
+                    sleep(200);
                     Pusher.setPosition(0.0);
-                    sleep(400);
+                    sleep(230);
 
                 }
             }
@@ -122,7 +124,7 @@ public class teleOp extends OpMode {
     double initPosition = -60;
     double linearSlideInitPos = 0;
     private double linearSlideEncSpeed(double targetPosition, double maxSpeed){
-        double difference = targetPosition + linearSlideInitPos - slides.getCurrentPosition();
+        double difference = targetPosition + linearSlideInitPos - (slides.getCurrentPosition()+ slides2.getCurrentPosition())/2;
         telemetry.addData("LS Difference", difference);
         double power = Range.clip(-difference / 200, -maxSpeed, maxSpeed);
         return power;
@@ -143,21 +145,35 @@ public class teleOp extends OpMode {
         boolean g1xPressed = ifPressed(g1x);
 
         if(ifPressed(gamepad1.a)){
-            targetPosition = -300 + initPosition;
+            targetPosition = -350 + initPosition;
 
-        } else if (ifPressed(gamepad1.b) ){
+        } else if (ifPressed(gamepad1.x) ){
             targetPosition = -1100 + initPosition;
 
-        } else if (ifPressed(gamepad1.y)){
-            targetPosition = -2000 + initPosition;
-        } else if (ifPressed(gamepad1.x)){
-            targetPosition = -2900 + initPosition;
+        }else if (ifPressed(gamepad1.b) && targetPosition != initPosition){
+            targetPosition = initPosition;
         }
             booleanIncrementer = 0;
             slides.setPower(linearSlideEncSpeed(targetPosition, 0.75));
+          //  slides2.setPower(linearSlideEncSpeed(targetPosition, 0.75));
 
             telemetry.addData("a: ", a);
     }
+
+    //intake
+    public void Intake(){
+        double  g1lt = gamepad1.left_trigger;
+        boolean g1ltifPressed = ifPressedFloat(g1lt);
+
+        if(gamepad1.left_trigger > 0.4 && t1.seconds() > 0.4 && intake.getPower() == 0.0){
+            intake.setPower(-1);
+        }else if (gamepad1.left_trigger > 0.4 && t1.seconds() > 0.4 && intake.getPower() == -1.0) {
+            intake.setPower(0);
+        }
+
+        booleanIncrementer = 0;
+    }
+
 
     // toggle switch methods
     private boolean ifPressed(boolean button){
@@ -179,8 +195,7 @@ public class teleOp extends OpMode {
     private boolean ifPressedFloat(double button){
         boolean output = false;
         boolean buttonBoolean = false;
-        if (button >= 0.1){
-            buttonBoolean = true;
+        if (button >= 0.4){            buttonBoolean = true;
         }
         if (booleanArray.size() == booleanIncrementer){
             booleanArray.add(false);
@@ -205,7 +220,10 @@ public class teleOp extends OpMode {
         Shooter = hardwareMap.get(DcMotor.class, "Shooter");
         Pusher = hardwareMap.get(Servo.class, "Pusher");
         slides = hardwareMap.get(DcMotor.class, "slides");
+        slides2 = hardwareMap.get(DcMotor.class, "slides2");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
+        intake = hardwareMap.get(DcMotor.class, "intake");
+
 
 
 
@@ -215,11 +233,13 @@ public class teleOp extends OpMode {
     public void init_loop() {
         targetPosition = initPosition;
         slides.setPower(linearSlideEncSpeed(targetPosition, 0.75));
+       // slides2.setPower(linearSlideEncSpeed(targetPosition, 0.75));
 
         telemetry.addData("a: ", ifPressed(gamepad1.a));
         telemetry.addData("initPos: ", initPosition);
         telemetry.addData("targetPosition: ", targetPosition);
         telemetry.addData("slides Positiion", slides.getCurrentPosition());
+        telemetry.addData("slides 2 Positiion", slides2.getCurrentPosition());
         telemetry.update();
     }
 
@@ -236,16 +256,18 @@ public class teleOp extends OpMode {
         push();
         shoot();
         slideButtons();
+        Intake();
         //moveLinearSlide();
 
         //LinearSlides movements
 
 
-
+        telemetry.addData("intakePower", intake.getPower());
         telemetry.addData("gampad1.a: ", ifPressed(gamepad1.a));
         telemetry.addData("initPos: ", initPosition);
         telemetry.addData("targetPosition: ", targetPosition);
-        telemetry.addData("slides Positiion", slides.getCurrentPosition());
+        telemetry.addData("slides  Positiion", slides.getCurrentPosition());
+        telemetry.addData("slides 2 Positiion", slides2.getCurrentPosition());
         telemetry.update();
 
     }

@@ -22,6 +22,7 @@ public class MoveForward extends OpMode {
     DcMotor LBMotor;
     DcMotor RBMotor;
 
+
     double one = 537.6;
 
     ElapsedTime t1 = new ElapsedTime();
@@ -175,12 +176,14 @@ public class MoveForward extends OpMode {
         if (!vaari) {
         rampUp(2*one, 0, 0.5, 0.5, 5);
         vaari = tripLoop();
-        }else if(vaari) {
+        }else if(vaari && !melinda) {
         rampUp(one,90, 0.5, 0.2, 10);
         melinda = tripLoop();
-        } else if (melinda){
+        } else if (melinda && !sri){
             rampUp(one, 90, 0.5, 0.3, 15);
             sri = tripLoop();
+        } else if(sri){
+
         }
 
 
