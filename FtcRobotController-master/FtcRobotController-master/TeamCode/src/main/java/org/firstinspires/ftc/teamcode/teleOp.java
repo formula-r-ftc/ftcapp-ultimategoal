@@ -66,10 +66,9 @@ public class teleOp extends OpMode {
 
         if(g1rtPressed && Shooter.getPower() == 0.0){
             Shooter.setPower(0.9);
-        }else if (gamepad1.right_trigger > 0.4 && t1.seconds() > 0.4){
+        }else if (gamepad1.right_trigger > 0.5 && t1.seconds() > 0.5 && Shooter.getPower() == 0.9){
             Shooter.setPower(0);
         }
-
         booleanIncrementer = 0;
     }
 //sleep methods
@@ -99,13 +98,13 @@ public class teleOp extends OpMode {
         if(g1rb && toggleReady){
             toggleReady = false;
             if (servoArmPos == 0.0 && gamepad1.right_bumper){
-                for (int i=0; i<3; i++){
+                for (int i = 0; i<3; i++){
                     telemetry.addData("Counter is", "push " + i);
                     telemetry.update();
                     Pusher.setPosition(0.2);
-                    sleep(200);
+                    sleep(300);
                     Pusher.setPosition(0.0);
-                    sleep(230);
+                    sleep(330);
 
                 }
             }
@@ -165,9 +164,9 @@ public class teleOp extends OpMode {
         double  g1lt = gamepad1.left_trigger;
         boolean g1ltifPressed = ifPressedFloat(g1lt);
 
-        if(gamepad1.left_trigger > 0.4 && t1.seconds() > 0.4 && intake.getPower() == 0.0){
+        if(gamepad1.left_trigger > 0.5 && t1.seconds() > 0.5 && intake.getPower() == 0.0){
             intake.setPower(-1);
-        }else if (gamepad1.left_trigger > 0.4 && t1.seconds() > 0.4 && intake.getPower() == -1.0) {
+        }else if (gamepad1.left_trigger > 0.5 && t1.seconds() > 0.5 && intake.getPower() == -1.0) {
             intake.setPower(0);
         }
 
@@ -195,7 +194,7 @@ public class teleOp extends OpMode {
     private boolean ifPressedFloat(double button){
         boolean output = false;
         boolean buttonBoolean = false;
-        if (button >= 0.4){            buttonBoolean = true;
+        if (button >= 0.5){            buttonBoolean = true;
         }
         if (booleanArray.size() == booleanIncrementer){
             booleanArray.add(false);
@@ -257,9 +256,7 @@ public class teleOp extends OpMode {
         shoot();
         slideButtons();
         Intake();
-        //moveLinearSlide();
 
-        //LinearSlides movements
 
 
         telemetry.addData("intakePower", intake.getPower());

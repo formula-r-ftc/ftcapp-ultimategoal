@@ -21,7 +21,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 
 @Autonomous
 
-public class ScanAutonomous extends OpMode {
+public class ScanAutonomous<tfod> extends OpMode {
     private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Quad";
     private static final String LABEL_SECOND_ELEMENT = "Single";
@@ -96,6 +96,43 @@ public class ScanAutonomous extends OpMode {
         }
     }
 
+    public void scan(){
+        if (tfod != null) {
+            List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+            if (updatedRecognitions != null) {
+                telemetry.addData("# Object Detected", updatedRecognitions.size());
+                if (updatedRecognitions.size() == 0) {
+                    telemetry.addData("TFOD","No Items Detected");
+                    telemetry.addData("Target Zone", "A");
+                } else {
+                    int i = 0;
+                    for (Recognition recognition : updatedRecognitions) {
+                        telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
+                        telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
+                                recognition.getLeft(), recognition.getTop());
+                        telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
+                                recognition.getRight(), recognition.getBottom());
+                        if (recognition.getLabel().equals("Single")) {
+                            telemetry.addData("Target Zone", "B");
+                            rampUp(537.6, 0.0,0.5, 0.2);
+                        } else if (recognition.getLabel().equals("Quad")) {
+                            telemetry.addData("Target Zone", "C");
+                        } else {
+                            telemetry.addData("Target Zone", "UNKNOWN");
+                        }
+                    }
+                }
+
+                telemetry.update();
+            }
+
+        }
+        if (tfod != null) {
+            tfod.shutdown();
+        }
+
+    }
+
 
     @Override
     public void init() {
@@ -142,40 +179,9 @@ public class ScanAutonomous extends OpMode {
         imu.initialize(parameters);
     }
 
-    if (tfod != null) {
-        List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-        if (updatedRecognitions != null) {
-            telemetry.addData("# Object Detected", updatedRecognitions.size());
-            if (updatedRecognitions.size() == 0) {
-                telemetry.addData("TFOD","No Items Detected");
-                telemetry.addData("Target Zone", "A");
-            } else {
-                int i = 0;
-                for (Recognition recognition : updatedRecognitions) {
-                    telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
-                    telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
-                            recognition.getLeft(), recognition.getTop());
-                    telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
-                            recognition.getRight(), recognition.getBottom());
-                    if (recognition.getLabel().equals("Single")) {
-                        telemetry.addData("Target Zone", "B");
-                        rampUp(537.6, 0.0,0.5, 0.2);
-                    } else if (recognition.getLabel().equals("Quad")) {
-                        telemetry.addData("Target Zone", "C");
-                    } else {
-                        telemetry.addData("Target Zone", "UNKNOWN");
-                    }
-                }
-            }
 
-            telemetry.update();
-        }
 
-    }
 
-    if (tfod != null) {
-        tfod.shutdown();
-    }
 
 
 
@@ -202,6 +208,7 @@ public class ScanAutonomous extends OpMode {
 
     @Override
     public void init_loop() {
+        scan();
         telemetry.addData("LF Distance", LFMotor.getCurrentPosition());
         telemetry.addData("RF Distance", RFMotor.getCurrentPosition());
         telemetry.addData("LB Distance", LBMotor.getCurrentPosition());
@@ -223,6 +230,7 @@ public class ScanAutonomous extends OpMode {
 
     @Override
     public void loop(){
+        rampUp(one,0, 0.5, 0.3);
 
         telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
         telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());

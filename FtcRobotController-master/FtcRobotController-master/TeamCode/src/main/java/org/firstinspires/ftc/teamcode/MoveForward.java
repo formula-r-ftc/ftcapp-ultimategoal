@@ -58,13 +58,14 @@ public class MoveForward extends OpMode {
                 double power = Range.clip(turnAngle / 50, -0.3, 0.3);
             return power;
         }
-
+        double AvgEncPos = (RFMotor.getCurrentPosition() + LFMotor.getCurrentPosition() +RBMotor.getCurrentPosition()+ LBMotor.getCurrentPosition())/4;
         public void rampUp(double distance, double heading, double time, double maxSpeed, double busyTime) {
             double AccelerationSlope = maxSpeed / time;
             double power = t1.seconds() * AccelerationSlope;
             if (Math.abs(power) < Math.abs(encoderSpeed(distance, maxSpeed))) { // if acceleration is less than speed
                 setTurnPower(turn(heading), power);  //then set motor power to turn towards heading and accelerate until max speed
             } else {
+                // if(AvgEncPos < ){
                 if (runtime.seconds() < busyTime) {
                     telemetry.addData("motor is: ", "busy");
                     setTurnPower(turn(heading), encoderSpeed(distance, maxSpeed));// otherwise keep motor power to heading and stop at the target Encoder Position
@@ -101,6 +102,7 @@ public class MoveForward extends OpMode {
                 return false;
             }
         }
+
 
     public final void idle() {
         // Otherwise, yield back our thread scheduling quantum and give other threads at
@@ -168,22 +170,28 @@ public class MoveForward extends OpMode {
         t1.reset();
         runtime.reset();
     }
-    boolean vaari = false;
-    boolean melinda = false;
-    boolean sri = false;
+    boolean trip1 = false;
+    boolean trip2 = false;
+    boolean trip3 = false;
+    boolean trip4 = false;
+    boolean trip5 = false;
+    boolean trip6 = false;
+    boolean trip7 = false;
+    boolean trip8 = false;
     @Override
     public void loop(){
-        if (!vaari) {
+        if (!trip1) {
         rampUp(2*one, 0, 0.5, 0.5, 5);
-        vaari = tripLoop();
-        }else if(vaari && !melinda) {
-        rampUp(one,90, 0.5, 0.2, 10);
-        melinda = tripLoop();
-        } else if (melinda && !sri){
-            rampUp(one, 90, 0.5, 0.3, 15);
-            sri = tripLoop();
-        } else if(sri){
-
+        trip1 = tripLoop();
+        }else if(trip1 && !trip2) {
+        rampUp(0,90, 0.5, 0.2, 10);
+        trip2 = tripLoop();
+        } else if (trip2 && !trip3){
+            rampUp(2*one, 90, 0.5, 0.3, 15);
+            trip3 = tripLoop();
+        } else if(trip3 && !trip4){
+            rampUp(-one, 0,0.5,0.3,20);
+            trip4 = tripLoop();
         }
 
 
