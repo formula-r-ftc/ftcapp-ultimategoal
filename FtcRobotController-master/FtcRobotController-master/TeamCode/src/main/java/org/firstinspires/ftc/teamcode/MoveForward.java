@@ -58,7 +58,7 @@ public class MoveForward extends OpMode {
                 double power = Range.clip(turnAngle / 50, -0.3, 0.3);
             return power;
         }
-        double AvgEncPos = (RFMotor.getCurrentPosition() + LFMotor.getCurrentPosition() +RBMotor.getCurrentPosition()+ LBMotor.getCurrentPosition())/4;
+       // double AvgEncPos = (RFMotor.getCurrentPosition() + LFMotor.getCurrentPosition() +RBMotor.getCurrentPosition()+ LBMotor.getCurrentPosition())/4;
         public void rampUp(double distance, double heading, double time, double maxSpeed, double busyTime) {
             double AccelerationSlope = maxSpeed / time;
             double power = t1.seconds() * AccelerationSlope;
@@ -66,7 +66,7 @@ public class MoveForward extends OpMode {
                 setTurnPower(turn(heading), power);  //then set motor power to turn towards heading and accelerate until max speed
             } else {
                 // if(AvgEncPos < ){
-                if (runtime.seconds() < busyTime) {
+               if (runtime.seconds() < busyTime) {
                     telemetry.addData("motor is: ", "busy");
                     setTurnPower(turn(heading), encoderSpeed(distance, maxSpeed));// otherwise keep motor power to heading and stop at the target Encoder Position
                 } else {
@@ -180,17 +180,18 @@ public class MoveForward extends OpMode {
     boolean trip8 = false;
     @Override
     public void loop(){
+// rampUp(0,90,0.5,0.3,0.5);
         if (!trip1) {
         rampUp(2*one, 0, 0.5, 0.5, 5);
         trip1 = tripLoop();
         }else if(trip1 && !trip2) {
-        rampUp(0,90, 0.5, 0.2, 10);
+        rampUp(0,90, 0.5, 0.2, 5);
         trip2 = tripLoop();
         } else if (trip2 && !trip3){
-            rampUp(2*one, 90, 0.5, 0.3, 15);
+            rampUp(2*one, 90, 0.5, 0.3, 10);
             trip3 = tripLoop();
         } else if(trip3 && !trip4){
-            rampUp(-one, 0,0.5,0.3,20);
+            rampUp(-one, 0,0.5,0.3,10);
             trip4 = tripLoop();
         }
 
