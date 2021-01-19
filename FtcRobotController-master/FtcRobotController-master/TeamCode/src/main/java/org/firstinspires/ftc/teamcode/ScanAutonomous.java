@@ -96,6 +96,10 @@ public class ScanAutonomous<tfod> extends OpMode {
         }
     }
 
+    boolean Single = false;
+    boolean Quad = false;
+    boolean None = false;
+
     public void scan(){
         if (tfod != null) {
             List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
@@ -114,11 +118,13 @@ public class ScanAutonomous<tfod> extends OpMode {
                                 recognition.getRight(), recognition.getBottom());
                         if (recognition.getLabel().equals("Single")) {
                             telemetry.addData("Target Zone", "B");
-                            rampUp(537.6, 0.0,0.5, 0.2);
+                            boolean Single = true;
                         } else if (recognition.getLabel().equals("Quad")) {
                             telemetry.addData("Target Zone", "C");
+                            boolean Quad = true;
                         } else {
-                            telemetry.addData("Target Zone", "UNKNOWN");
+                            telemetry.addData("Target Zone", "None");
+                            boolean None = true;
                         }
                     }
                 }
@@ -131,6 +137,30 @@ public class ScanAutonomous<tfod> extends OpMode {
             tfod.shutdown();
         }
 
+    }
+
+    public boolean moveSingle() {
+        if (Single == true){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean moveQuad() {
+        if (Quad == true){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean moveNone() {
+        if (None == true){
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
@@ -230,7 +260,6 @@ public class ScanAutonomous<tfod> extends OpMode {
 
     @Override
     public void loop(){
-        rampUp(one,0, 0.5, 0.3);
 
         telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
         telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());

@@ -18,7 +18,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @TeleOp
-public class teleOp extends OpMode {
+public class FormulaRTeleOp extends OpMode {
 // initializing and variables
     BNO055IMU imu;
     Orientation angles;
@@ -37,19 +37,20 @@ public class teleOp extends OpMode {
     ElapsedTime t3 = new ElapsedTime();
     ElapsedTime t4 = new ElapsedTime();
 
-    boolean flyWeel = false;
+    boolean Outake = false;
 
     int booleanIncrementer = 0;
 
     ArrayList<Boolean> booleanArray = new ArrayList<Boolean>();
 
-    //drivetrian method
+    //DriveTrian method
+   
     public void moveDriveTrain(){
         if(gamepad1.left_bumper){
-            LFMotor.setPower(0.6*(gamepad1.right_stick_y));
-            LBMotor.setPower(0.6*(gamepad1.right_stick_y));
-            RFMotor.setPower(0.6*(-gamepad1.left_stick_y));
-            RBMotor.setPower(0.6*(-gamepad1.left_stick_y));
+            LFMotor.setPower(0.3*(gamepad1.right_stick_y));
+            LBMotor.setPower(0.3*(gamepad1.right_stick_y));
+            RFMotor.setPower(0.3*(-gamepad1.left_stick_y));
+            RBMotor.setPower(0.3*(-gamepad1.left_stick_y));
         }else {
             LFMotor.setPower(gamepad1.right_stick_y);
             LBMotor.setPower(gamepad1.right_stick_y);
@@ -58,20 +59,23 @@ public class teleOp extends OpMode {
         }
     }
 
-    // shooter method
+    //Shooter method
+
     public void shoot() {
-        double g1rt = gamepad1.right_trigger;
 
-        boolean g1rtPressed = ifPressedFloat(g1rt);
+        boolean g1lsb = gamepad1.left_stick_button;
 
-        if(g1rtPressed && Shooter.getPower() == 0.0){
-            Shooter.setPower(0.9);
-        }else if (gamepad1.right_trigger > 0.5 && t1.seconds() > 0.5 && Shooter.getPower() == 0.9){
+        boolean g1lsbPressed = ifPressed(g1lsb);
+
+        if(ifPressed(gamepad1.left_stick_button)){
+            Shooter.setPower(-1);
+        }else if (ifPressed(gamepad1.left_stick_button)) {
             Shooter.setPower(0);
         }
-        booleanIncrementer = 0;
     }
-//sleep methods
+
+    //sleep methods
+
     public final void idle() {
         // Otherwise, yield back our thread scheduling quantum and give other threads at
         // our priority level a chance to run
@@ -87,6 +91,7 @@ public class teleOp extends OpMode {
 
 
     // pusher method
+
     public void push(){
         boolean g1rb = gamepad1.right_bumper;
         boolean toggleReady = true;
@@ -120,6 +125,7 @@ public class teleOp extends OpMode {
     }
 
     //Linear Slide Methods
+
     double initPosition = -60;
     double linearSlideInitPos = 0;
     private double linearSlideEncSpeed(double targetPosition, double maxSpeed){
@@ -161,17 +167,17 @@ public class teleOp extends OpMode {
 
     //intake
     public void Intake(){
-        double  g1lt = gamepad1.left_trigger;
-        boolean g1ltifPressed = ifPressedFloat(g1lt);
 
-        if(gamepad1.left_trigger > 0.5 && t1.seconds() > 0.5 && intake.getPower() == 0.0){
+        boolean g1rsb = gamepad1.right_stick_button;
+
+        boolean g1rsbPressed = ifPressed(g1rsb);
+
+        if(ifPressed(gamepad1.right_stick_button)){
             intake.setPower(-1);
-        }else if (gamepad1.left_trigger > 0.5 && t1.seconds() > 0.5 && intake.getPower() == -1.0) {
+        }else if (ifPressed(gamepad1.right_stick_button)) {
             intake.setPower(0);
-        }
+    }        }
 
-        booleanIncrementer = 0;
-    }
 
 
     // toggle switch methods
