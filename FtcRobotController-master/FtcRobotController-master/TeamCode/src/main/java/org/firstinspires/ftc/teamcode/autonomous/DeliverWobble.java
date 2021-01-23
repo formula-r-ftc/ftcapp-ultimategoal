@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.autonomous;//package org.firstinspires.ftc.teamcode.autonomous;
 
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -6,21 +6,17 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.robotcontroller.external.samples.ScanAutonomous;
+import org.firstinspires.ftc.teamcode.autonomous.ScanRings;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-import static org.firstinspires.ftc.teamcode.EncoderAutonomousBBlue.one;
-
-
 @Autonomous
 
-public class RunAutonomous extends OpMode {
+public class DeliverWobble extends OpMode {
 
-    ScanAutonomous sense = new ScanAutonomous();
+   ScanRings sense = new ScanRings();
 
     BNO055IMU imu;
     Orientation angles;
@@ -32,18 +28,23 @@ public class RunAutonomous extends OpMode {
     ElapsedTime t1 = new ElapsedTime();
     ElapsedTime t2 = new ElapsedTime();
 
-    public void Move (){
+    double one = 537.6;
 
+    public void Move (){
         if (sense.moveSingle()) {
             sense.rampUp(one,0, 0.5, 0.3);
+            telemetry.addData("Scanned: ", "one");
         } else if (sense.moveQuad()) {
             sense.rampUp(one, -90, 0.5, 0.3);
+            telemetry.addData("Scanned: ", "four");
         } else if (sense.moveNone()) {
             sense.rampUp(one, 90, 0.5, 0.3);
+            telemetry.addData("Scanned: ", "none");
         }
     }
+
     @Override
-    public void init_loop(){
+    public void init() {
         sense.scan();
         telemetry.addData("LF Distance", LFMotor.getCurrentPosition());
         telemetry.addData("RF Distance", RFMotor.getCurrentPosition());
@@ -68,10 +69,12 @@ public class RunAutonomous extends OpMode {
         telemetry.addData("Pitch: ", angles.thirdAngle);
         telemetry.update();
     }
+
     @Override
-    public void init() {
+    public void init_loop(){
 
     }
+
 
     @Override
     public void start() {
@@ -81,6 +84,7 @@ public class RunAutonomous extends OpMode {
 
     @Override
     public void loop(){
+        Move();
 
         telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
         telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
