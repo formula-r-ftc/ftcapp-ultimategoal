@@ -31,7 +31,7 @@ public class ScanRings<tfod> extends OpMode {
             "ASIwwWv/////AAABmR/+9d4sSkVEshzTIOkfUgAWTcQCqWQ3NeZFwrYj+HewIITQOcdzK95pLGiq3w+muSW12YMucPY4gr+LXUWae13of2pAVIwC03KapsTkznFaL5vJQvBSmir72Q0XFzO975UhES7phEj54qmV0HANvVXc9SVvzljLiSJvJt/6eDUEyqco/rUOnneZhEarLqZch8ma+TNUbWnNO4HnNu+E31xQVjR1ADGmSpln14EFvrLD22aWyGRFufLDPxMNZ0+HYMQg2rmyDK1HFxDnk6qpvtCYTjIXcLpUPXaDF5if3wIO3mDOaTk0OwdnBav9N1/bmwmYdEzjhRnTb7A8UCAnAUSxlAYIIH3WABg2FvfhQsRJ";
 
     private VuforiaLocalizer vuforia;
-    private TFObjectDetector tfod;
+    public TFObjectDetector tfod;
 
     BNO055IMU imu;
     Orientation angles;
@@ -106,17 +106,15 @@ public class ScanRings<tfod> extends OpMode {
     public void scan(){
 
         if (tfod != null) {
-            tfod.activate();
-            tfod.setZoom(2.5, 16.0/9.0);
-        }
-
-        if (tfod != null) {
+            // getUpdatedRecognitions() will return null if no new information is available since
+            // the last time that call was made.
             List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
             if (updatedRecognitions != null) {
                 telemetry.addData("# Object Detected", updatedRecognitions.size());
                 if (updatedRecognitions.size() == 0) {
                     telemetry.addData("TFOD","No Items Detected");
                     telemetry.addData("Target Zone", "A");
+                    None = true;
                 } else {
                     int i = 0;
                     for (Recognition recognition : updatedRecognitions) {
@@ -127,18 +125,18 @@ public class ScanRings<tfod> extends OpMode {
                                 recognition.getRight(), recognition.getBottom());
                         if (recognition.getLabel().equals("Single")) {
                             telemetry.addData("Target Zone", "B");
-                            boolean Single = true;
+                             Single = true;
                         } else if (recognition.getLabel().equals("Quad")) {
                             telemetry.addData("Target Zone", "C");
-                            boolean Quad = true;
+                             Quad = true;
                         } else {
                             telemetry.addData("Target Zone", "None");
-                            boolean None = true;
+                           //  None = true;
                         }
                     }
                 }
 
-                telemetry.update();
+
             }
 
         }
@@ -172,7 +170,7 @@ public class ScanRings<tfod> extends OpMode {
         }
     }
 
-    private void initVuforia() {
+    public void initVuforia() {
 
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
@@ -184,7 +182,7 @@ public class ScanRings<tfod> extends OpMode {
     }
 
 
-    private void initTfod() {
+    public void initTfod() {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
@@ -193,12 +191,14 @@ public class ScanRings<tfod> extends OpMode {
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
     }
 
-    @Override
-    public void init() {
+    public void getCurrentPosition(){
+        telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
+        telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
+        telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
+        telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
+    }
 
-        initVuforia();
-        initTfod();
-
+    public void initHardware(){
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
 
@@ -233,11 +233,25 @@ public class ScanRings<tfod> extends OpMode {
         imu.initialize(parameters);
     }
 
+    @Override
+    public void init() {
+
+        initVuforia();
+        initTfod();
+
+        initHardware();
+
+    }
+
 
 
     @Override
     public void init_loop() {
-        scan();
+        if (tfod != null) {
+            tfod.activate();
+            tfod.setZoom(2.5, 16.0/9.0);
+        }
+
         telemetry.addData("LF Distance", LFMotor.getCurrentPosition());
         telemetry.addData("RF Distance", RFMotor.getCurrentPosition());
         telemetry.addData("LB Distance", LBMotor.getCurrentPosition());
@@ -259,7 +273,10 @@ public class ScanRings<tfod> extends OpMode {
 
     @Override
     public void loop(){
-
+        scan();
+        telemetry.addData("none: ", None);
+        telemetry.addData("quad: ", Quad);
+        telemetry.addData("single: ", Single);
         telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
         telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
         telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
