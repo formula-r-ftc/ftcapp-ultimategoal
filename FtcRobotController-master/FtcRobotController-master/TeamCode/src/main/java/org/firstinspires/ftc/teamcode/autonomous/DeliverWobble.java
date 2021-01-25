@@ -86,6 +86,7 @@ public class DeliverWobble extends OpMode {
             tfod.activate();
             tfod.setZoom(2.5, 16.0/9.0);
         }
+        sense.scan();
 
     }
 
@@ -97,7 +98,7 @@ public class DeliverWobble extends OpMode {
 
     @Override
     public void loop(){
-        sense.scan();
+
         Move();
 
 

@@ -63,13 +63,9 @@ public class FormulaRTeleOp extends OpMode {
 
     public void shoot() {
 
-        boolean g1lsb = gamepad1.left_stick_button;
-
-        boolean g1lsbPressed = ifPressed(g1lsb);
-
-        if(ifPressed(gamepad1.left_stick_button)){
-            Shooter.setPower(-1);
-        }else if (ifPressed(gamepad1.left_stick_button)) {
+        if((gamepad1.right_trigger) > 0.5 && t1.seconds() > 0.5 && Shooter.getPower() == 0){
+            Shooter.setPower(1);
+        }else if ((gamepad1.right_trigger) > 0.5 && t1.seconds() > 0.5){
             Shooter.setPower(0);
         }
     }
@@ -168,13 +164,9 @@ public class FormulaRTeleOp extends OpMode {
     //intake
     public void Intake(){
 
-        boolean g1rsb = gamepad1.right_stick_button;
-
-        boolean g1rsbPressed = ifPressed(g1rsb);
-
-        if(ifPressed(gamepad1.right_stick_button)){
+        if((gamepad1.left_trigger) > 0.5 && t1.seconds() > 0.5 &&intake.getPower() == 0){
             intake.setPower(-1);
-        }else if (ifPressed(gamepad1.right_stick_button)) {
+        }else if ((gamepad1.left_trigger) > 0.5 && t1.seconds() > 0.5 && intake.getPower() == -1) {
             intake.setPower(0);
     }        }
 
@@ -200,7 +192,7 @@ public class FormulaRTeleOp extends OpMode {
     private boolean ifPressedFloat(double button){
         boolean output = false;
         boolean buttonBoolean = false;
-        if (button >= 0.5){            buttonBoolean = true;
+        if (button >= 0.25){            buttonBoolean = true;
         }
         if (booleanArray.size() == booleanIncrementer){
             booleanArray.add(false);
