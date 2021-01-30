@@ -169,7 +169,8 @@ public class FormulaRTeleOp extends OpMode {
             intake.setPower(-1);
         }else if ((gamepad1.left_trigger) > 0.5 && t1.seconds() > 0.5 && intake.getPower() == -1) {
             intake.setPower(0);
-    }        }
+        }
+    }
 
 
 
