@@ -58,27 +58,51 @@ public class autoMovements extends OpMode {
                 double power = Range.clip(turnAngle / 50, -0.3, 0.3);
             return power;
         }
-       // double AvgEncPos = (RFMotor.getCurrentPosition() + LFMotor.getCurrentPosition() +RBMotor.getCurrentPosition()+ LBMotor.getCurrentPosition())/4;
+
         public void rampUp(double distance, double heading, double time, double maxSpeed, double busyTime) {
+            double AvgEncPos = (RFMotor.getCurrentPosition() + LFMotor.getCurrentPosition() + RBMotor.getCurrentPosition() + LBMotor.getCurrentPosition()) / 4;
             double AccelerationSlope = maxSpeed / time;
             double power = t1.seconds() * AccelerationSlope;
             if (Math.abs(power) < Math.abs(encoderSpeed(distance, maxSpeed))) { // if acceleration is less than speed
                 setTurnPower(turn(heading), power);  //then set motor power to turn towards heading and accelerate until max speed
             } else {
-               //  if(Math.abs(AvgEncPos) < Math.abs(distance-80)){
-               if (runtime.seconds() < busyTime) {
-                    telemetry.addData("motor is: ", "busy");
-                    setTurnPower(turn(heading), encoderSpeed(distance, maxSpeed));// otherwise keep motor power to heading and stop at the target Encoder Position
-                } else {
-                    telemetry.addData("motor is: ", "not busy");
+                if (!(Math.abs(distance - AvgEncPos) < 80)) {
+//                    if (runtime.seconds() < busyTime) {
+                        telemetry.addData("motor is: ", "busy");
+                        setTurnPower(turn(heading), encoderSpeed(distance, maxSpeed));// otherwise keep motor power to heading and stop at the target Encoder Position
+                    } else {
+                        telemetry.addData("motor is: ", "not busy");
+                        RFMotor.setPower(0);
+                        LFMotor.setPower(0);
+                        RBMotor.setPower(0);
+                        LBMotor.setPower(0);
+                        setTurnPower(0, 0);
+                    }
+                }
+            }
+
+    public void rampUpTurn (double distance, double heading, double time, double maxSpeed, double busyTime) {
+        double AvgEncPos = (RFMotor.getCurrentPosition() + LFMotor.getCurrentPosition() + RBMotor.getCurrentPosition() + LBMotor.getCurrentPosition()) / 4;
+        double AccelerationSlope = maxSpeed / time;
+        double power = t1.seconds() * AccelerationSlope;
+        if (Math.abs(power) < Math.abs(encoderSpeed(distance, maxSpeed))) { // if acceleration is less than speed
+            setTurnPower(turn(heading), power);  //then set motor power to turn towards heading and accelerate until max speed
+        } else {
+//            if (!(Math.abs(heading - getHeading()) < 11)) {
+                    if (runtime.seconds() < busyTime) {
+                telemetry.addData("motor is: ", "busy");
+                setTurnPower(turn(heading), encoderSpeed(distance, maxSpeed));// otherwise keep motor power to heading and stop at the target Encoder Position
+            } else {
+                telemetry.addData("motor is: ", "not busy");
                 RFMotor.setPower(0);
                 LFMotor.setPower(0);
                 RBMotor.setPower(0);
                 LBMotor.setPower(0);
-                    setTurnPower(0,0);
-                }
+                setTurnPower(0, 0);
+
             }
         }
+    }
 
         boolean tripLoopDone = false;
         boolean EncoderPower;
@@ -104,18 +128,7 @@ public class autoMovements extends OpMode {
         }
 
 
-    public final void idle() {
-        // Otherwise, yield back our thread scheduling quantum and give other threads at
-        // our priority level a chance to run
-        Thread.yield();
-    }
-    public final void sleep(long milliseconds) {
-        try {
-            Thread.sleep(milliseconds);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-    }
+
 
 
     @Override
@@ -178,21 +191,26 @@ public class autoMovements extends OpMode {
     boolean trip6 = false;
     boolean trip7 = false;
     boolean trip8 = false;
+
     @Override
     public void loop(){
-// rampUp(0,90,0.5,0.3,0.5);
+//rampUpTurn(0,95,0.5,0.3,5);
         if (!trip1) {
-        rampUp(2*one, 0, 0.5, 0.5, 5);
+        rampUp(7*one, 0, 0.5, 0.5, 5);
         trip1 = tripLoop();
+        telemetry.addData("trip", "1");
         }else if(trip1 && !trip2) {
-        rampUp(0,90, 0.5, 0.2, 5);
+        rampUpTurn(0,90, 0.5, 0.2, 5);
         trip2 = tripLoop();
+            telemetry.addData("trip", "2");
         } else if (trip2 && !trip3){
             rampUp(2*one, 90, 0.5, 0.3, 10);
             trip3 = tripLoop();
+            telemetry.addData("trip", "3");
         } else if(trip3 && !trip4){
-            rampUp(-one, 0,0.5,0.3,10);
+            rampUpTurn(-one, 0,0.5,0.3,10);
             trip4 = tripLoop();
+            telemetry.addData("trip", "4");
         }
 
 
@@ -201,6 +219,8 @@ public class autoMovements extends OpMode {
         telemetry.addData("LFMotor encoder:", LFMotor.getCurrentPosition());
         telemetry.addData("RBMotor encoder:", RBMotor.getCurrentPosition());
         telemetry.addData("LBMotor encoder:", LBMotor.getCurrentPosition());
+        telemetry.addData("heading:", getHeading());
+        telemetry.addData("avg encoder:", (LBMotor.getCurrentPosition()+RBMotor.getCurrentPosition()+ LFMotor.getCurrentPosition()+RFMotor.getCurrentPosition())/4);
         telemetry.update();
     }
 }

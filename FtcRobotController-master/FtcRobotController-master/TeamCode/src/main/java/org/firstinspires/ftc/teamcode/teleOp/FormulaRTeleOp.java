@@ -100,6 +100,7 @@ public class FormulaRTeleOp extends OpMode {
             toggleReady = false;
             if (servoArmPos == 0.0 && gamepad1.right_bumper){
                 for (int i = 0; i<3; i++){
+                    moveDriveTrain();
                     telemetry.addData("Counter is", "push " + i);
                     telemetry.update();
                     Pusher.setPosition(0.2);

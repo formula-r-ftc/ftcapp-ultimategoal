@@ -73,6 +73,10 @@ public class DeliverWobble extends OpMode {
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
     }
 
+    public void scan(){
+        sense.scan();
+    }
+
     @Override
     public void init() {
         initVuforia();
