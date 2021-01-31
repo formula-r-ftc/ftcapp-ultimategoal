@@ -23,19 +23,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public class DeliverWobble extends OpMode {
 
-   ScanRings sense = new ScanRings();
-   autoMovements run = new autoMovements();
-
-    private VuforiaLocalizer vuforia;
-    public TFObjectDetector tfod;
-
-    private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
-    private static final String LABEL_FIRST_ELEMENT = "Quad";
-    private static final String LABEL_SECOND_ELEMENT = "Single";
-
-    private static final String VUFORIA_KEY =
-            "ASIwwWv/////AAABmR/+9d4sSkVEshzTIOkfUgAWTcQCqWQ3NeZFwrYj+HewIITQOcdzK95pLGiq3w+muSW12YMucPY4gr+LXUWae13of2pAVIwC03KapsTkznFaL5vJQvBSmir72Q0XFzO975UhES7phEj54qmV0HANvVXc9SVvzljLiSJvJt/6eDUEyqco/rUOnneZhEarLqZch8ma+TNUbWnNO4HnNu+E31xQVjR1ADGmSpln14EFvrLD22aWyGRFufLDPxMNZ0+HYMQg2rmyDK1HFxDnk6qpvtCYTjIXcLpUPXaDF5if3wIO3mDOaTk0OwdnBav9N1/bmwmYdEzjhRnTb7A8UCAnAUSxlAYIIH3WABg2FvfhQsRJ";
-
+    ScanRings sense = new ScanRings();
+    autoMovements run = new autoMovements();
 
     double one = 537.6;
 
@@ -52,26 +41,7 @@ public class DeliverWobble extends OpMode {
         }
     }
 
-    void initVuforia() {
 
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
-
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
-
-    }
-
-
-    void initTfod() {
-        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.8f;
-        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
-    }
 
     public void scan(){
         sense.scan();
@@ -79,18 +49,12 @@ public class DeliverWobble extends OpMode {
 
     @Override
     public void init() {
-        initVuforia();
-        initTfod();
+
 
     }
 
     @Override
     public void init_loop(){
-        if (tfod != null) {
-            tfod.activate();
-            tfod.setZoom(2.5, 16.0/9.0);
-        }
-        sense.scan();
 
     }
 
@@ -102,7 +66,7 @@ public class DeliverWobble extends OpMode {
 
     @Override
     public void loop(){
-
+        sense.scan();
         Move();
 
 

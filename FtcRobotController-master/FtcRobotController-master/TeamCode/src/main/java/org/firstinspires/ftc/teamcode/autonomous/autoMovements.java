@@ -29,57 +29,59 @@ public class autoMovements extends OpMode {
     ElapsedTime runtime = new ElapsedTime();
 
     //  this gives you the distance and speed of encoders
-        double encoderSpeed(double targetPosition, double maxSpeed){
-            double AverageEncoderPosition = (RFMotor.getCurrentPosition() + LFMotor.getCurrentPosition() +RBMotor.getCurrentPosition()+ LBMotor.getCurrentPosition())/4;
-            double distance = targetPosition - AverageEncoderPosition;
-            //telemetry.addData("Encoder Speed distance",distance);
-            double speed = Range.clip(distance/500, -maxSpeed, maxSpeed); // clip the speed
-            return speed;
-        }
+    double encoderSpeed(double targetPosition, double maxSpeed){
+        double AverageEncoderPosition = 0 ; //(RFMotor.getCurrentPosition()  + LFMotor.getCurrentPosition() +RBMotor.getCurrentPosition()+ LBMotor.getCurrentPosition())/4;
+        double distance = targetPosition - AverageEncoderPosition;
+        //telemetry.addData("Encoder Speed distance",distance);
+        double speed = Range.clip(distance/500, -maxSpeed, maxSpeed); // clip the speed
+        return speed;
+    }
 
-        public void setTurnPower(double turnPower, double power){
-            RFMotor.setPower(turnPower - power);
-            LFMotor.setPower(-turnPower - power);
-            RBMotor.setPower(turnPower - power);
-            LBMotor.setPower(-turnPower - power);
-        }
+    public void setTurnPower(double turnPower, double power){
+        RFMotor.setPower(turnPower - power);
+        LFMotor.setPower(-turnPower - power);
+        RBMotor.setPower(turnPower - power);
+        LBMotor.setPower(-turnPower - power);
+    }
 
-        double getHeading(){
-            angles=imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            this.imu.getPosition();
-            return angles.firstAngle;
-        }
+    double getHeading(){
+        angles=imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        this.imu.getPosition();
+        return angles.firstAngle;
+    }
 
 
-        double turn(double targetAngle) {
-                getHeading();
-                double turnAngle = targetAngle - getHeading();
-               // telemetry.addData("turnAngle", turnAngle);
-                double power = Range.clip(turnAngle / 50, -0.3, 0.3);
-            return power;
-        }
+    double turn(double targetAngle) {
+        getHeading();
+        double turnAngle = targetAngle - getHeading();
+        // telemetry.addData("turnAngle", turnAngle);
+        double power = Range.clip(turnAngle / 50, -0.3, 0.3);
+        return power;
+    }
 
-        public void rampUp(double distance, double heading, double time, double maxSpeed, double busyTime) {
-            double AvgEncPos = (RFMotor.getCurrentPosition() + LFMotor.getCurrentPosition() + RBMotor.getCurrentPosition() + LBMotor.getCurrentPosition()) / 4;
-            double AccelerationSlope = maxSpeed / time;
-            double power = t1.seconds() * AccelerationSlope;
-            if (Math.abs(power) < Math.abs(encoderSpeed(distance, maxSpeed))) { // if acceleration is less than speed
-                setTurnPower(turn(heading), power);  //then set motor power to turn towards heading and accelerate until max speed
-            } else {
-                if (!(Math.abs(distance - AvgEncPos) < 80)) {
+    public void rampUp(double distance, double heading, double time, double maxSpeed, double busyTime) {
+        double AvgEncPos = (RFMotor.getCurrentPosition() + LFMotor.getCurrentPosition() + RBMotor.getCurrentPosition() + LBMotor.getCurrentPosition()) / 4;
+        double AccelerationSlope = maxSpeed / time;
+        double power = t1.seconds() * AccelerationSlope;
+//            double previousValue = AvgEncPos;
+//            double finalDistance = previousValue + distance;
+        if (Math.abs(power) < Math.abs(encoderSpeed(distance, maxSpeed))) { // if acceleration is less than speed
+            setTurnPower(turn(heading), power);  //then set motor power to turn towards heading and accelerate until max speed
+        } else {
+            if (!(Math.abs(distance - AvgEncPos) < 80)) {
 //                    if (runtime.seconds() < busyTime) {
-                        telemetry.addData("motor is: ", "busy");
-                        setTurnPower(turn(heading), encoderSpeed(distance, maxSpeed));// otherwise keep motor power to heading and stop at the target Encoder Position
-                    } else {
-                        telemetry.addData("motor is: ", "not busy");
-                        RFMotor.setPower(0);
-                        LFMotor.setPower(0);
-                        RBMotor.setPower(0);
-                        LBMotor.setPower(0);
-                        setTurnPower(0, 0);
-                    }
-                }
+                telemetry.addData("motor is: ", "busy");
+                setTurnPower(turn(heading), encoderSpeed(distance, maxSpeed));// otherwise keep motor power to heading and stop at the target Encoder Position
+            } else {
+                telemetry.addData("motor is: ", "not busy");
+                RFMotor.setPower(0);
+                LFMotor.setPower(0);
+                RBMotor.setPower(0);
+                LBMotor.setPower(0);
+                setTurnPower(0, 0);
             }
+        }
+    }
 
     public void rampUpTurn (double distance, double heading, double time, double maxSpeed, double busyTime) {
         double AvgEncPos = (RFMotor.getCurrentPosition() + LFMotor.getCurrentPosition() + RBMotor.getCurrentPosition() + LBMotor.getCurrentPosition()) / 4;
@@ -88,8 +90,8 @@ public class autoMovements extends OpMode {
         if (Math.abs(power) < Math.abs(encoderSpeed(distance, maxSpeed))) { // if acceleration is less than speed
             setTurnPower(turn(heading), power);  //then set motor power to turn towards heading and accelerate until max speed
         } else {
-//            if (!(Math.abs(heading - getHeading()) < 11)) {
-                    if (runtime.seconds() < busyTime) {
+            if (!(Math.abs(heading - getHeading()) < 11)) {
+                //                   if (runtime.seconds() < busyTime) {
                 telemetry.addData("motor is: ", "busy");
                 setTurnPower(turn(heading), encoderSpeed(distance, maxSpeed));// otherwise keep motor power to heading and stop at the target Encoder Position
             } else {
@@ -104,28 +106,28 @@ public class autoMovements extends OpMode {
         }
     }
 
-        boolean tripLoopDone = false;
-        boolean EncoderPower;
-        boolean tripLoop(){
-            double AverageEncPower = (RFMotor.getPower() + LFMotor.getPower() + RBMotor.getPower() + LBMotor.getPower())/4;
+    boolean tripLoopDone = false;
+    boolean EncoderPower;
+    boolean tripLoop(){
+        double AverageEncPower = (RFMotor.getPower() + LFMotor.getPower() + RBMotor.getPower() + LBMotor.getPower())/4;
 
-            if (AverageEncPower == 0){
-                EncoderPower = false;
-            } else{
-                EncoderPower = true;
-            }
-
-            if (!tripLoopDone && EncoderPower){
-                tripLoopDone = true;
-            }
-
-            if (tripLoopDone && !EncoderPower){
-                return  true;
-            }
-            else {
-                return false;
-            }
+        if (AverageEncPower == 0){
+            EncoderPower = false;
+        } else{
+            EncoderPower = true;
         }
+
+        if (!tripLoopDone && EncoderPower){
+            tripLoopDone = true;
+        }
+
+        if (tripLoopDone && !EncoderPower){
+            return  true;
+        }
+        else {
+            return false;
+        }
+    }
 
 
 
@@ -192,34 +194,24 @@ public class autoMovements extends OpMode {
     boolean trip7 = false;
     boolean trip8 = false;
 
-    public void reset(){
-        telemetry.addData("LF Distance", LFMotor.getCurrentPosition());
-        telemetry.addData("RF Distance", RFMotor.getCurrentPosition());
-        telemetry.addData("LB Distance", LBMotor.getCurrentPosition());
-        telemetry.addData("RB Distance", RBMotor.getCurrentPosition());
-    }
-
     @Override
     public void loop(){
 //rampUpTurn(0,95,0.5,0.3,5);
         if (!trip1) {
-        rampUp(7*one, 0, 0.5, 0.5, 5);
-          trip1 = tripLoop();
-          telemetry.addData("trip", "1");
+            rampUp(3*one, 0, 0.5, 0.5, 5);
+            trip1 = tripLoop();
+            telemetry.addData("trip", "1");
         }
         else if(trip1 && !trip2) {
-            reset();
             rampUpTurn(0,90, 0.5, 0.2, 5);
             trip2 = tripLoop();
             telemetry.addData("trip", "2");
         } else if (trip2 && !trip3){
-            reset();
-            rampUp(2*one, 90, 0.5, 0.3, 10);
+            rampUp(one, 90, 0.5, 0.3, 5);
             trip3 = tripLoop();
             telemetry.addData("trip", "3");
         } else if(trip3 && !trip4){
-            reset();
-            rampUpTurn(-one, 0,0.5,0.3,10);
+            rampUpTurn(-one, 0,0.5,0.3,5);
             trip4 = tripLoop();
             telemetry.addData("trip", "4");
         }
