@@ -41,12 +41,6 @@ public class DeliverWobble extends OpMode {
         }
     }
 
-
-
-    public void scan(){
-        sense.scan();
-    }
-
     @Override
     public void init() {
 
@@ -69,7 +63,7 @@ public class DeliverWobble extends OpMode {
         sense.scan();
         Move();
 
-
+telemetry.update();
 
     }
 }
