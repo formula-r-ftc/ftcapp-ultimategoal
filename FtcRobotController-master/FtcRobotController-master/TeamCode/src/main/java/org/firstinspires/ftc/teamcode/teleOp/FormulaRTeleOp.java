@@ -31,6 +31,8 @@ public class FormulaRTeleOp extends OpMode {
     private DcMotor slides;
     private DcMotor slides2;
     private DcMotor intake;
+    private Servo WobbleArmR;
+    private Servo WobbleArmL;
 
     ElapsedTime t1 = new ElapsedTime();
     ElapsedTime t2 = new ElapsedTime();
@@ -113,7 +115,18 @@ public class FormulaRTeleOp extends OpMode {
         }
     }
 
+    public void WobbleArm() {
+        if (gamepad2.right_bumper) {
+                WobbleArmL.setPosition(0);
+                WobbleArmR.setPosition(0);
 
+        } else{
+            WobbleArmL.setPosition(1);
+            WobbleArmR.setPosition(1);
+        }
+    telemetry.addData("WobbleArmLPosition", WobbleArmL);
+    telemetry.addData("WobbleArmRPosition", WobbleArmR);
+    }
 
     public void moveLinearSlide(){
         slides.setPower(gamepad1.left_trigger);
@@ -222,6 +235,9 @@ public class FormulaRTeleOp extends OpMode {
         slides2 = hardwareMap.get(DcMotor.class, "slides2");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         intake = hardwareMap.get(DcMotor.class, "intake");
+        WobbleArmL = hardwareMap.get(Servo.class, "WobbleArmL");
+        WobbleArmR = hardwareMap.get(Servo.class, "WobbleArmR");
+
 
 
 
@@ -239,6 +255,8 @@ public class FormulaRTeleOp extends OpMode {
         telemetry.addData("targetPosition: ", targetPosition);
         telemetry.addData("slides Positiion", slides.getCurrentPosition());
         telemetry.addData("slides 2 Positiion", slides2.getCurrentPosition());
+        telemetry.addData("WobbleArmLPosition", WobbleArmL.getPosition());
+        telemetry.addData("WobbleArmRPosition", WobbleArmR.getPosition());
         telemetry.update();
     }
 
@@ -256,15 +274,19 @@ public class FormulaRTeleOp extends OpMode {
         shoot();
         slideButtons();
         Intake();
+        WobbleArm();
 
 
-
+        telemetry.addData("servoArmPosL", WobbleArmL.getPosition());
+        telemetry.addData("servoArmPosR", WobbleArmR.getPosition());
         telemetry.addData("intakePower", intake.getPower());
         telemetry.addData("gampad1.a: ", ifPressed(gamepad1.a));
         telemetry.addData("initPos: ", initPosition);
         telemetry.addData("targetPosition: ", targetPosition);
         telemetry.addData("slides  Positiion", slides.getCurrentPosition());
         telemetry.addData("slides 2 Positiion", slides2.getCurrentPosition());
+        telemetry.addData("WobbleArmLPosition", WobbleArmL.getPosition());
+        telemetry.addData("WobbleArmRPosition", WobbleArmR.getPosition());
         telemetry.update();
 
     }
