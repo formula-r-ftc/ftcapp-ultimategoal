@@ -247,8 +247,8 @@ public class FormulaRTeleOp extends OpMode {
     @Override
     public void init_loop() {
         targetPosition = initPosition;
-        slides.setPower(linearSlideEncSpeed(targetPosition, 0.75));
-        slides2.setPower(linearSlideEncSpeed(-targetPosition, 0.75));
+//        slides.setPower(linearSlideEncSpeed(targetPosition, 0.75));
+//        slides2.setPower(linearSlideEncSpeed(-targetPosition, 0.75));
 
         telemetry.addData("a: ", ifPressed(gamepad1.a));
         telemetry.addData("initPos: ", initPosition);
