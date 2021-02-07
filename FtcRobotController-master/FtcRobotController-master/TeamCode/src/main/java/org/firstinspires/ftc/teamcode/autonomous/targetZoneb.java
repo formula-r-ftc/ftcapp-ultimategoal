@@ -4,11 +4,11 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -30,23 +30,23 @@ public class targetZoneb extends OpMode {
     ElapsedTime runtime = new ElapsedTime();
 
     //  this gives you the distance and speed of encoders
-    double encoderSpeed(double targetPosition, double maxSpeed){
-        double AverageEncoderPosition = 0 ; //(RFMotor.getCurrentPosition()  + LFMotor.getCurrentPosition() +RBMotor.getCurrentPosition()+ LBMotor.getCurrentPosition())/4;
+    double encoderSpeed(double targetPosition, double maxSpeed) {
+        double AverageEncoderPosition = 0; //(RFMotor.getCurrentPosition()  + LFMotor.getCurrentPosition() +RBMotor.getCurrentPosition()+ LBMotor.getCurrentPosition())/4;
         double distance = targetPosition - AverageEncoderPosition;
         //telemetry.addData("Encoder Speed distance",distance);
-        double speed = Range.clip(distance/500, -maxSpeed, maxSpeed); // clip the speed
+        double speed = Range.clip(distance / 500, -maxSpeed, maxSpeed); // clip the speed
         return speed;
     }
 
-    public void setTurnPower(double turnPower, double power){
+    public void setTurnPower(double turnPower, double power) {
         RFMotor.setPower(turnPower - power);
         LFMotor.setPower(-turnPower - power);
         RBMotor.setPower(turnPower - power);
         LBMotor.setPower(-turnPower - power);
     }
 
-    double getHeading(){
-        angles=imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+    double getHeading() {
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         this.imu.getPosition();
         return angles.firstAngle;
     }
@@ -84,7 +84,7 @@ public class targetZoneb extends OpMode {
         }
     }
 
-    public void rampUpTurn (double distance, double heading, double time, double maxSpeed, double busyTime) {
+    public void rampUpTurn(double distance, double heading, double time, double maxSpeed, double busyTime) {
         double AvgEncPos = (RFMotor.getCurrentPosition() + LFMotor.getCurrentPosition() + RBMotor.getCurrentPosition() + LBMotor.getCurrentPosition()) / 4;
         double AccelerationSlope = maxSpeed / time;
         double power = t1.seconds() * AccelerationSlope;
@@ -109,29 +109,26 @@ public class targetZoneb extends OpMode {
 
     boolean tripLoopDone = false;
     boolean EncoderPower;
-    boolean tripLoop(){
-        double AverageEncPower = (RFMotor.getPower() + LFMotor.getPower() + RBMotor.getPower() + LBMotor.getPower())/4;
 
-        if (AverageEncPower == 0){
+    boolean tripLoop() {
+        double AverageEncPower = (RFMotor.getPower() + LFMotor.getPower() + RBMotor.getPower() + LBMotor.getPower()) / 4;
+
+        if (AverageEncPower == 0) {
             EncoderPower = false;
-        } else{
+        } else {
             EncoderPower = true;
         }
 
-        if (!tripLoopDone && EncoderPower){
+        if (!tripLoopDone && EncoderPower) {
             tripLoopDone = true;
         }
 
-        if (tripLoopDone && !EncoderPower){
-            return  true;
-        }
-        else {
+        if (tripLoopDone && !EncoderPower) {
+            return true;
+        } else {
             return false;
         }
     }
-
-
-
 
 
     @Override
@@ -181,11 +178,13 @@ public class targetZoneb extends OpMode {
         telemetry.addData("Pitch: ", angles.thirdAngle);
         telemetry.update();
     }
+
     @Override
     public void start() {
         t1.reset();
         runtime.reset();
     }
+
     boolean trip1 = false;
     boolean trip2 = false;
     boolean trip3 = false;
@@ -196,15 +195,14 @@ public class targetZoneb extends OpMode {
     boolean trip8 = false;
 
     @Override
-    public void loop(){
+    public void loop() {
 //rampUpTurn(0,95,0.5,0.3,5);
         if (!trip1) {
             rampUp(5.17 * one, -10, 0.5, 0.5, 5);
             trip1 = tripLoop();
             telemetry.addData("trip", "1");
-        }
-        else if(trip1 && !trip2) {
-            rampUpTurn(-1.75 * one,-10, 0.5, 0.2, 5);
+        } else if (trip1 && !trip2) {
+            rampUpTurn(-1.75 * one, -10, 0.5, 0.2, 5);
             trip2 = tripLoop();
             telemetry.addData("trip", "2");
 
@@ -217,15 +215,18 @@ public class targetZoneb extends OpMode {
 //            rampUpTurn(-one, 0,0.5,0.3,5);
 //            trip4 = tripLoop();
 //            telemetry.addData("trip", "4");
-        
-        telemetry.addData("Runtime: ", runtime.seconds());
-        telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
-        telemetry.addData("LFMotor encoder:", LFMotor.getCurrentPosition());
-        telemetry.addData("RBMotor encoder:", RBMotor.getCurrentPosition());
-        telemetry.addData("LBMotor encoder:", LBMotor.getCurrentPosition());
-        telemetry.addData("heading:", getHeading());
-        telemetry.addData("avg encoder:", (LBMotor.getCurrentPosition()+RBMotor.getCurrentPosition()+ LFMotor.getCurrentPosition()+RFMotor.getCurrentPosition())/4);
-        telemetry.update();}
 
+            telemetry.addData("Runtime: ", runtime.seconds());
+            telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
+            telemetry.addData("LFMotor encoder:", LFMotor.getCurrentPosition());
+            telemetry.addData("RBMotor encoder:", RBMotor.getCurrentPosition());
+            telemetry.addData("LBMotor encoder:", LBMotor.getCurrentPosition());
+            telemetry.addData("heading:", getHeading());
+            telemetry.addData("avg encoder:", (LBMotor.getCurrentPosition() + RBMotor.getCurrentPosition() + LFMotor.getCurrentPosition() + RFMotor.getCurrentPosition()) / 4);
+            telemetry.update();
+        }
+
+    }
 }
+
 

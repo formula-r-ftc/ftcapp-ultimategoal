@@ -202,7 +202,6 @@ public class targetZoneA extends OpMode {
             trip1 = tripLoop();
             telemetry.addData("trip", "1");
         }
-//        else if (gamepad1.left_trigger
         else if(trip1 && !trip2) {
             rampUpTurn(-2 * one,110, 0.5, 0.2, 5);
             trip2 = tripLoop();
@@ -230,7 +229,7 @@ public class targetZoneA extends OpMode {
             telemetry.update();
 
 
-        }
+
 
     }
 }
