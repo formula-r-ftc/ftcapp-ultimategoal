@@ -117,12 +117,12 @@ public class FormulaRTeleOp extends OpMode {
 
     public void WobbleArm() {
         if (gamepad2.right_bumper) {
-                WobbleArmL.setPosition(0);
-                WobbleArmR.setPosition(0);
+                WobbleArmL.setPosition(0.35);
+                WobbleArmR.setPosition(0.1);
 
         } else{
-            WobbleArmL.setPosition(1);
-            WobbleArmR.setPosition(1);
+            WobbleArmL.setPosition(0);
+            WobbleArmR.setPosition(0.5);
         }
     telemetry.addData("WobbleArmLPosition", WobbleArmL);
     telemetry.addData("WobbleArmRPosition", WobbleArmR);
@@ -163,16 +163,16 @@ public class FormulaRTeleOp extends OpMode {
             targetPosition = -350 + initPosition;
 
         } else if (ifPressed(gamepad1.x) ){
-            targetPosition = -1100 + initPosition;
+            targetPosition = -1500 + initPosition;
 
         }else if (ifPressed(gamepad1.b) && targetPosition != initPosition){
             targetPosition = initPosition;
         }
             booleanIncrementer = 0;
             slides.setPower(linearSlideEncSpeed(targetPosition, 0.75));
-          //  slides2.setPower(linearSlideEncSpeed(targetPosition, 0.75));
+            slides2.setPower(linearSlideEncSpeed(-targetPosition, 0.75));
 
-            telemetry.addData("a: ", a);
+            telemetry.addData("slidesposition ", slides.getCurrentPosition());
     }
 
     //intake
@@ -248,7 +248,7 @@ public class FormulaRTeleOp extends OpMode {
     public void init_loop() {
         targetPosition = initPosition;
         slides.setPower(linearSlideEncSpeed(targetPosition, 0.75));
-       // slides2.setPower(linearSlideEncSpeed(targetPosition, 0.75));
+        slides2.setPower(linearSlideEncSpeed(-targetPosition, 0.75));
 
         telemetry.addData("a: ", ifPressed(gamepad1.a));
         telemetry.addData("initPos: ", initPosition);
