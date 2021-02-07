@@ -90,8 +90,8 @@ public class autoMovements extends OpMode {
         if (Math.abs(power) < Math.abs(encoderSpeed(distance, maxSpeed))) { // if acceleration is less than speed
             setTurnPower(turn(heading), power);  //then set motor power to turn towards heading and accelerate until max speed
         } else {
-            if (!(Math.abs(heading - getHeading()) < 11)) {
-                //                   if (runtime.seconds() < busyTime) {
+            if (!(Math.abs(heading - getHeading()) <11)) {
+                //                   if (runtime.seco nds() < busyTime) {
                 telemetry.addData("motor is: ", "busy");
                 setTurnPower(turn(heading), encoderSpeed(distance, maxSpeed));// otherwise keep motor power to heading and stop at the target Encoder Position
             } else {

@@ -18,11 +18,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import org.firstinspires.ftc.teamcode.autonomous.autoMovements;
 
 @Autonomous
-
 public class ScanRings<tfod> extends OpMode {
+
+    autoMovements run = new autoMovements();
+
     private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Quad";
     private static final String LABEL_SECOND_ELEMENT = "Single";
@@ -47,11 +49,11 @@ public class ScanRings<tfod> extends OpMode {
 
     //  this gives you the distance and speed of encoders
     double encoderSpeed(double targetPosition, double maxSpeed){
-        double AverageEncoderPosition = (RFMotor.getCurrentPosition() + LFMotor.getCurrentPosition() +RBMotor.getCurrentPosition()+ LBMotor.getCurrentPosition())/4;
+        double AverageEncoderPosition = 0 ; //(RFMotor.getCurrentPosition()  + LFMotor.getCurrentPosition() +RBMotor.getCurrentPosition()+ LBMotor.getCurrentPosition())/4;
         double distance = targetPosition - AverageEncoderPosition;
-        telemetry.addData("Encoder Speed distance",distance);
-        double power = Range.clip(distance/500, -maxSpeed, maxSpeed); // y = m*x + b
-        return power;
+        //telemetry.addData("Encoder Speed distance",distance);
+        double speed = Range.clip(distance/500, -maxSpeed, maxSpeed); // clip the speed
+        return speed;
     }
 
     public void setTurnPower(double turnPower, double power){
@@ -71,31 +73,36 @@ public class ScanRings<tfod> extends OpMode {
     double turn(double targetAngle) {
         getHeading();
         double turnAngle = targetAngle - getHeading();
-        telemetry.addData("turnAngle", turnAngle);
+        // telemetry.addData("turnAngle", turnAngle);
         double power = Range.clip(turnAngle / 50, -0.3, 0.3);
         return power;
+
     }
 
-    public void rampUp(double distance, double heading, double time, double maxSpeed){
-        double AccelerationSlope = maxSpeed/time;
+    public void rampUp(double distance, double heading, double time, double maxSpeed,double busyTime){
+        double AvgEncPos = (RFMotor.getCurrentPosition() + LFMotor.getCurrentPosition() + RBMotor.getCurrentPosition() + LBMotor.getCurrentPosition()) / 4;
+        double AccelerationSlope = maxSpeed / time;
         double power = t1.seconds() * AccelerationSlope;
+//            double previousValue = AvgEncPos;
+//            double finalDistance = previousValue + distance;
         if (Math.abs(power) < Math.abs(encoderSpeed(distance, maxSpeed))) { // if acceleration is less than speed
             setTurnPower(turn(heading), power);  //then set motor power to turn towards heading and accelerate until max speed
-        }else{
-            setTurnPower(turn(heading), encoderSpeed(distance, maxSpeed));// otherwise keep motor power to heading and stop at the target Encoder Position
+        } else {
+            if (!(Math.abs(distance - AvgEncPos) < 80)) {
+//                    if (runtime.seconds() < busyTime) {
+                telemetry.addData("motor is: ", "busy");
+                setTurnPower(turn(heading), encoderSpeed(distance, maxSpeed));// otherwise keep motor power to heading and stop at the target Encoder Position
+            } else {
+                telemetry.addData("motor is: ", "not busy");
+                RFMotor.setPower(0);
+                LFMotor.setPower(0);
+                RBMotor.setPower(0);
+                LBMotor.setPower(0);
+                setTurnPower(0, 0);
+            }
         }
-    }
-    public final void idle() {
-        Thread.yield();
     }
 
-    public final void sleep(long milliseconds) {
-        try {
-            Thread.sleep(milliseconds);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-    }
 
 
     //Start of tensorflow program
@@ -181,7 +188,6 @@ public class ScanRings<tfod> extends OpMode {
 
     }
 
-
     public void initTfod() {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -191,11 +197,28 @@ public class ScanRings<tfod> extends OpMode {
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
     }
 
-    public void getCurrentPosition(){
-        telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
-        telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
-        telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
-        telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
+// THIS IS WHERE THE PROGRAM STARTS---------------------------------------------------------------------------------------------------------------------------------------------------------------------/
+
+    public void moveTargetZoneA(){
+        if(moveNone() == true){
+            rampUp(0,0,0,0,0);
+            telemetry.addData("Sensed", "None" + " and going to target zone A");
+        }
+    }
+
+    public void moveTargetZoneB(){
+
+        if (moveSingle() == true){
+            rampUp(one, 0, 0.5,0.5,0.5);
+            telemetry.addData("Sensed", "Single" + " and going to target zone B");
+        }
+    }
+
+    public void moveTargetZoneC(){
+        if(moveNone() == true){
+            rampUp(0,0,0,0,0);
+            telemetry.addData("Sensed", "None" + " and going to target zone C");
+        }
     }
 
     public void initHardware(){
@@ -241,6 +264,7 @@ public class ScanRings<tfod> extends OpMode {
 
         initHardware();
 
+
     }
 
 
@@ -251,7 +275,7 @@ public class ScanRings<tfod> extends OpMode {
             tfod.activate();
             tfod.setZoom(2.5, 16.0/9.0);
         }
-
+        scan();
         telemetry.addData("LF Distance", LFMotor.getCurrentPosition());
         telemetry.addData("RF Distance", RFMotor.getCurrentPosition());
         telemetry.addData("LB Distance", LBMotor.getCurrentPosition());
@@ -273,7 +297,10 @@ public class ScanRings<tfod> extends OpMode {
 
     @Override
     public void loop(){
-        scan();
+
+        moveTargetZoneA();
+        moveTargetZoneB();
+        moveTargetZoneC();
         telemetry.addData("none: ", None);
         telemetry.addData("quad: ", Quad);
         telemetry.addData("single: ", Single);
