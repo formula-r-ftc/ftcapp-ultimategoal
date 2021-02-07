@@ -198,15 +198,18 @@ public class targetZoneA extends OpMode {
     public void loop() {
 //rampUpTurn(0,95,0.5,0.3,5);
         if (!trip1) {
-            rampUp(2 * one, 110, 0.5, 0.5, 5);
+            rampUp(5 * one, 110, 0.5, 0.5, 5);
             trip1 = tripLoop();
             telemetry.addData("trip", "1");
-//        }
-//        else if(trip1 && !trip2) {
-//            rampUpTurn(one,90, 0.5, 0.2, 5);
-//            trip2 = tripLoop();
-//            telemetry.addData("trip", "2");
-//        } else if (trip2 && !trip3){
+        }
+//        else if (gamepad1.left_trigger
+        else if(trip1 && !trip2) {
+            rampUpTurn(-2 * one,110, 0.5, 0.2, 5);
+            trip2 = tripLoop();
+            telemetry.addData("trip", "2");
+
+        }
+        //else if (trip2 && !trip3){
 //            rampUp(one, 90, 0.5, 0.3, 5);
 //            trip3 = tripLoop();
 //            telemetry.addData("trip", "3");

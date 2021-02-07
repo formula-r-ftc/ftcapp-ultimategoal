@@ -4,16 +4,17 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 @Autonomous
-public class autoMovements extends OpMode {
+public class targetZoneb extends OpMode {
 
     BNO055IMU imu;
     Orientation angles;
@@ -24,7 +25,6 @@ public class autoMovements extends OpMode {
 
 
     double one = 537.6;
-    double inch = 42.8;
 
     ElapsedTime t1 = new ElapsedTime();
     ElapsedTime runtime = new ElapsedTime();
@@ -91,8 +91,8 @@ public class autoMovements extends OpMode {
         if (Math.abs(power) < Math.abs(encoderSpeed(distance, maxSpeed))) { // if acceleration is less than speed
             setTurnPower(turn(heading), power);  //then set motor power to turn towards heading and accelerate until max speed
         } else {
-            if (!(Math.abs(heading - getHeading()) <11)) {
-                //                   if (runtime.seco nds() < busyTime) {
+            if (!(Math.abs(heading - getHeading()) < 11)) {
+                //                   if (runtime.seconds() < busyTime) {
                 telemetry.addData("motor is: ", "busy");
                 setTurnPower(turn(heading), encoderSpeed(distance, maxSpeed));// otherwise keep motor power to heading and stop at the target Encoder Position
             } else {
@@ -199,25 +199,25 @@ public class autoMovements extends OpMode {
     public void loop(){
 //rampUpTurn(0,95,0.5,0.3,5);
         if (!trip1) {
-            rampUp(3*one, 0, 0.5, 0.5, 5);
+            rampUp(5.17 * one, -10, 0.5, 0.5, 5);
             trip1 = tripLoop();
             telemetry.addData("trip", "1");
         }
         else if(trip1 && !trip2) {
-            rampUpTurn(0,90, 0.5, 0.2, 5);
+            rampUpTurn(-1.75 * one,-10, 0.5, 0.2, 5);
             trip2 = tripLoop();
             telemetry.addData("trip", "2");
-        } else if (trip2 && !trip3){
-            rampUp(one, 90, 0.5, 0.3, 5);
-            trip3 = tripLoop();
-            telemetry.addData("trip", "3");
-        } else if(trip3 && !trip4){
-            rampUpTurn(-one, 0,0.5,0.3,5);
-            trip4 = tripLoop();
-            telemetry.addData("trip", "4");
-        }
 
 
+//        } else if (trip2 && !trip3){
+//            rampUp(one, 90, 0.5, 0.3, 5);
+//            trip3 = tripLoop();
+//            telemetry.addData("trip", "3");
+//        } else if(trip3 && !trip4){
+//            rampUpTurn(-one, 0,0.5,0.3,5);
+//            trip4 = tripLoop();
+//            telemetry.addData("trip", "4");
+        
         telemetry.addData("Runtime: ", runtime.seconds());
         telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
         telemetry.addData("LFMotor encoder:", LFMotor.getCurrentPosition());
@@ -225,6 +225,7 @@ public class autoMovements extends OpMode {
         telemetry.addData("LBMotor encoder:", LBMotor.getCurrentPosition());
         telemetry.addData("heading:", getHeading());
         telemetry.addData("avg encoder:", (LBMotor.getCurrentPosition()+RBMotor.getCurrentPosition()+ LFMotor.getCurrentPosition()+RFMotor.getCurrentPosition())/4);
-        telemetry.update();
-    }
+        telemetry.update();}
+
 }
+
