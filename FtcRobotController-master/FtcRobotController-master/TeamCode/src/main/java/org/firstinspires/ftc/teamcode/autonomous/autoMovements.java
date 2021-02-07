@@ -24,6 +24,7 @@ public class autoMovements extends OpMode {
 
 
     double one = 537.6;
+    double inch = 42.8;
 
     ElapsedTime t1 = new ElapsedTime();
     ElapsedTime runtime = new ElapsedTime();
