@@ -29,9 +29,11 @@ public class targetZoneb extends OpMode {
     ElapsedTime t1 = new ElapsedTime();
     ElapsedTime runtime = new ElapsedTime();
 
+    double AverageEncoderPosition;
+
     //  this gives you the distance and speed of encoders
     double encoderSpeed(double targetPosition, double maxSpeed) {
-        double AverageEncoderPosition = 0; //(RFMotor.getCurrentPosition()  + LFMotor.getCurrentPosition() +RBMotor.getCurrentPosition()+ LBMotor.getCurrentPosition())/4;
+         AverageEncoderPosition = 0; //(RFMotor.getCurrentPosition()  + LFMotor.getCurrentPosition() +RBMotor.getCurrentPosition()+ LBMotor.getCurrentPosition())/4;
         double distance = targetPosition - AverageEncoderPosition;
         //telemetry.addData("Encoder Speed distance",distance);
         double speed = Range.clip(distance / 500, -maxSpeed, maxSpeed); // clip the speed
@@ -64,8 +66,6 @@ public class targetZoneb extends OpMode {
         double AvgEncPos = (RFMotor.getCurrentPosition() + LFMotor.getCurrentPosition() + RBMotor.getCurrentPosition() + LBMotor.getCurrentPosition()) / 4;
         double AccelerationSlope = maxSpeed / time;
         double power = t1.seconds() * AccelerationSlope;
-//            double previousValue = AvgEncPos;
-//            double finalDistance = previousValue + distance;
         if (Math.abs(power) < Math.abs(encoderSpeed(distance, maxSpeed))) { // if acceleration is less than speed
             setTurnPower(turn(heading), power);  //then set motor power to turn towards heading and accelerate until max speed
         } else {
@@ -80,6 +80,8 @@ public class targetZoneb extends OpMode {
                 RBMotor.setPower(0);
                 LBMotor.setPower(0);
                 setTurnPower(0, 0);
+
+                AverageEncoderPosition = 0;
             }
         }
     }
@@ -103,13 +105,14 @@ public class targetZoneb extends OpMode {
                 LBMotor.setPower(0);
                 setTurnPower(0, 0);
 
+                AverageEncoderPosition = 0;
+
             }
         }
     }
 
     boolean tripLoopDone = false;
     boolean EncoderPower;
-
     boolean tripLoop() {
         double AverageEncPower = (RFMotor.getPower() + LFMotor.getPower() + RBMotor.getPower() + LBMotor.getPower()) / 4;
 
@@ -198,15 +201,16 @@ public class targetZoneb extends OpMode {
     public void loop() {
 //rampUpTurn(0,95,0.5,0.3,5);
         if (!trip1) {
-            rampUp(5.17 * one, -10, 0.5, 0.5, 5);
+            rampUp(5.17 * one, 0, 0.5, 0.5, 5);
             trip1 = tripLoop();
             telemetry.addData("trip", "1");
-        } else if (trip1 && !trip2) {
-            rampUpTurn(-1.75 * one, -10, 0.5, 0.2, 5);
+        }
+        else if (trip1 && !trip2) {
+            rampUp(-1.75 * one, 0, 0.5, 0.2, 5);
             trip2 = tripLoop();
             telemetry.addData("trip", "2");
 
-
+        }
 //        } else if (trip2 && !trip3){
 //            rampUp(one, 90, 0.5, 0.3, 5);
 //            trip3 = tripLoop();
@@ -227,6 +231,6 @@ public class targetZoneb extends OpMode {
         }
 
     }
-}
+
 
 

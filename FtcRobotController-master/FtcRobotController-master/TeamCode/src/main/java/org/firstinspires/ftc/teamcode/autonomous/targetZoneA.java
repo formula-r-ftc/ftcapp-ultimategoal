@@ -28,10 +28,12 @@ public class targetZoneA extends OpMode {
     ElapsedTime t1 = new ElapsedTime();
     ElapsedTime runtime = new ElapsedTime();
 
+    double AverageEconderPosition;
+
     //  this gives you the distance and speed of encoders
     double encoderSpeed(double targetPosition, double maxSpeed){
-        double AverageEncoderPosition = 0 ; //(RFMotor.getCurrentPosition()  + LFMotor.getCurrentPosition() +RBMotor.getCurrentPosition()+ LBMotor.getCurrentPosition())/4;
-        double distance = targetPosition - AverageEncoderPosition;
+        AverageEconderPosition = 0 ; //(RFMotor.getCurrentPosition()  + LFMotor.getCurrentPosition() +RBMotor.getCurrentPosition()+ LBMotor.getCurrentPosition())/4;
+        double distance = targetPosition - AverageEconderPosition;
         //telemetry.addData("Encoder Speed distance",distance);
         double speed = Range.clip(distance/500, -maxSpeed, maxSpeed); // clip the speed
         return speed;
@@ -79,6 +81,9 @@ public class targetZoneA extends OpMode {
                 RBMotor.setPower(0);
                 LBMotor.setPower(0);
                 setTurnPower(0, 0);
+
+                AverageEconderPosition = 0;
+
             }
         }
     }
@@ -125,7 +130,9 @@ public class targetZoneA extends OpMode {
             return  true;
         }
         else {
+            telemetry.addData("tripLoop return:", "FALSE" );
             return false;
+
         }
     }
 
@@ -198,12 +205,12 @@ public class targetZoneA extends OpMode {
     public void loop() {
 //rampUpTurn(0,95,0.5,0.3,5);
         if (!trip1) {
-            rampUp(5 * one, 110, 0.5, 0.5, 5);
+            rampUp(4.8 * one, -2, 0.5, 0.5, 5);
             trip1 = tripLoop();
             telemetry.addData("trip", "1");
         }
         else if(trip1 && !trip2) {
-            rampUpTurn(-2 * one,110, 0.5, 0.2, 5);
+            rampUpTurn(-2 * one,-20, 0.5, 0.2, 5);
             trip2 = tripLoop();
             telemetry.addData("trip", "2");
 

@@ -111,7 +111,9 @@ public class ScanRings<tfod> extends OpMode {
     boolean None = false;
 
     public void scan(){
-
+        Single = false;
+         Quad = false;
+         None = false;
         if (tfod != null) {
             // getUpdatedRecognitions() will return null if no new information is available since
             // the last time that call was made.
@@ -209,14 +211,14 @@ public class ScanRings<tfod> extends OpMode {
     public void moveTargetZoneB(){
 
         if (moveSingle() == true){
-            rampUp(one, 0, 0.5,0.5,0.5);
+            rampUp(one, 0, 0,0.5,0.5);
             telemetry.addData("Sensed", "Single" + " and going to target zone B");
         }
     }
 
     public void moveTargetZoneC(){
         if(moveNone() == true){
-            rampUp(0,0,0,0,0);
+            rampUp(one*4,0,0,0.5,0);
             telemetry.addData("Sensed", "None" + " and going to target zone C");
         }
     }
@@ -275,7 +277,7 @@ public class ScanRings<tfod> extends OpMode {
             tfod.activate();
             tfod.setZoom(2.5, 16.0/9.0);
         }
-        scan();
+
         telemetry.addData("LF Distance", LFMotor.getCurrentPosition());
         telemetry.addData("RF Distance", RFMotor.getCurrentPosition());
         telemetry.addData("LB Distance", LBMotor.getCurrentPosition());
@@ -297,7 +299,7 @@ public class ScanRings<tfod> extends OpMode {
 
     @Override
     public void loop(){
-
+        scan();
         moveTargetZoneA();
         moveTargetZoneB();
         moveTargetZoneC();
