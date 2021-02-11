@@ -22,6 +22,11 @@ public class targetZoneA extends OpMode {
     DcMotor LBMotor;
     DcMotor RBMotor;
 
+    double RFPreviousValue = 0;
+    double RBPreviousValue = 0;
+    double LFPreviousValue = 0;
+    double LBPreviousValue = 0;
+
 
     double one = 537.6;
 
@@ -32,7 +37,7 @@ public class targetZoneA extends OpMode {
 
     //  this gives you the distance and speed of encoders
     double encoderSpeed(double targetPosition, double maxSpeed){
-        AverageEconderPosition = 0 ; //(RFMotor.getCurrentPosition()  + LFMotor.getCurrentPosition() +RBMotor.getCurrentPosition()+ LBMotor.getCurrentPosition())/4;
+        AverageEconderPosition = (RFMotor.getCurrentPosition() - RFPreviousValue + LFMotor.getCurrentPosition() - LFPreviousValue + RBMotor.getCurrentPosition() - RBPreviousValue + LBMotor.getCurrentPosition() - LBPreviousValue) / 4;
         double distance = targetPosition - AverageEconderPosition;
         //telemetry.addData("Encoder Speed distance",distance);
         double speed = Range.clip(distance/500, -maxSpeed, maxSpeed); // clip the speed
@@ -82,8 +87,6 @@ public class targetZoneA extends OpMode {
                 LBMotor.setPower(0);
                 setTurnPower(0, 0);
 
-                AverageEconderPosition = 0;
-
             }
         }
     }
@@ -127,6 +130,11 @@ public class targetZoneA extends OpMode {
         }
 
         if (tripLoopDone && !EncoderPower){
+
+            RFPreviousValue = RFMotor.getCurrentPosition();
+            RBPreviousValue = RBMotor.getCurrentPosition();
+            LFPreviousValue = RFMotor.getCurrentPosition();
+            LBPreviousValue = RFMotor.getCurrentPosition();
             return  true;
         }
         else {

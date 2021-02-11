@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.autonomous;
+  package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -23,18 +23,22 @@ public class targetZoneb extends OpMode {
     DcMotor LBMotor;
     DcMotor RBMotor;
 
+    double RFPreviousValue = 0;
+    double RBPreviousValue = 0;
+    double LFPreviousValue = 0;
+    double LBPreviousValue = 0;
 
     double one = 537.6;
 
     ElapsedTime t1 = new ElapsedTime();
     ElapsedTime runtime = new ElapsedTime();
 
-    double AverageEncoderPosition;
+    double AverageEconderPosition;
 
     //  this gives you the distance and speed of encoders
     double encoderSpeed(double targetPosition, double maxSpeed) {
-         AverageEncoderPosition = 0; //(RFMotor.getCurrentPosition()  + LFMotor.getCurrentPosition() +RBMotor.getCurrentPosition()+ LBMotor.getCurrentPosition())/4;
-        double distance = targetPosition - AverageEncoderPosition;
+        AverageEconderPosition = (RFMotor.getCurrentPosition() - RFPreviousValue + LFMotor.getCurrentPosition() - LFPreviousValue + RBMotor.getCurrentPosition() - RBPreviousValue + LBMotor.getCurrentPosition() - LBPreviousValue) / 4;
+        double distance = targetPosition - AverageEconderPosition;
         //telemetry.addData("Encoder Speed distance",distance);
         double speed = Range.clip(distance / 500, -maxSpeed, maxSpeed); // clip the speed
         return speed;
@@ -81,7 +85,11 @@ public class targetZoneb extends OpMode {
                 LBMotor.setPower(0);
                 setTurnPower(0, 0);
 
-                AverageEncoderPosition = 0;
+                RFPreviousValue = RFMotor.getCurrentPosition();
+                RBPreviousValue = RBMotor.getCurrentPosition();
+                LFPreviousValue = RFMotor.getCurrentPosition();
+                LBPreviousValue = RFMotor.getCurrentPosition();
+
             }
         }
     }
@@ -105,8 +113,6 @@ public class targetZoneb extends OpMode {
                 LBMotor.setPower(0);
                 setTurnPower(0, 0);
 
-                AverageEncoderPosition = 0;
-
             }
         }
     }
@@ -129,6 +135,10 @@ public class targetZoneb extends OpMode {
         if (tripLoopDone && !EncoderPower) {
             return true;
         } else {
+            RFPreviousValue = RFMotor.getCurrentPosition();
+            RBPreviousValue = RBMotor.getCurrentPosition();
+            LFPreviousValue = RFMotor.getCurrentPosition();
+            LBPreviousValue = RFMotor.getCurrentPosition();
             return false;
         }
     }

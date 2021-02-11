@@ -65,9 +65,9 @@ public class FormulaRTeleOp extends OpMode {
 
     public void shoot() {
 
-        if((gamepad1.right_trigger) > 0.5 && t1.seconds() > 0.5 && Shooter.getPower() == 0){
+        if((gamepad1.right_trigger) > 0.3 && t1.seconds() > 0.3 && Shooter.getPower() == 0){
             Shooter.setPower(1);
-        }else if ((gamepad1.right_trigger) > 0.5 && t1.seconds() > 0.5){
+        }else if ((gamepad1.right_trigger) > 0.3 && t1.seconds() > 0.3){
             Shooter.setPower(0);
         }
     }
@@ -131,12 +131,12 @@ public class FormulaRTeleOp extends OpMode {
     public void moveLinearSlide(){
         slides.setPower(gamepad1.left_trigger);
 
-
     }
 
     //Linear Slide Methods
 
-    double initPosition = -60;
+    double initPositionA = 1900;
+    double initPositionB = 1408;
     double linearSlideInitPos = 0;
     private double linearSlideEncSpeed(double targetPosition, double maxSpeed){
         double difference = targetPosition + linearSlideInitPos - (slides.getCurrentPosition()+ slides2.getCurrentPosition())/2;
@@ -145,43 +145,36 @@ public class FormulaRTeleOp extends OpMode {
         return power;
     }
 
-    double targetPosition;
+    double targetPositionA;
+    double targetPositionB;
     public void slideButtons(){
-        double a = -300 + initPosition, b = -1100 + initPosition, y = -2000 + initPosition, x = -2900 + initPosition;
-
-        boolean g1a = gamepad1.a;
-        boolean g1b = gamepad1.b;
-        boolean g1y = gamepad1.y;
-        boolean g1x = gamepad1.x;
-
-        boolean g1aPressed = ifPressed(g1a);
-        boolean g1bPressed = ifPressed(g1b);
-        boolean g1yPressed = ifPressed(g1y);
-        boolean g1xPressed = ifPressed(g1x);
 
         if(ifPressed(gamepad1.a)){
-            targetPosition = -350 + initPosition;
+           targetPositionA = 1600;
 
         } else if (ifPressed(gamepad1.x) ){
-            targetPosition = -1500 + initPosition;
+         //   targetPositionA = -1500 + initPositionA;
 
-        }else if (ifPressed(gamepad1.b) && targetPosition != initPosition){
-            targetPosition = initPosition;
+        }else if (ifPressed(gamepad1.b) && targetPositionA != initPositionA){
+            targetPositionA = initPositionA;
         }
             booleanIncrementer = 0;
-            slides.setPower(linearSlideEncSpeed(targetPosition, 0.75));
-            slides2.setPower(linearSlideEncSpeed(-targetPosition, 0.75));
+            slides.setPower(linearSlideEncSpeed(targetPositionA, 0.75));
+//            slides2.setPower(linearSlideEncSpeed(-targetPositionB, 0.75));
+
 
             telemetry.addData("slidesposition ", slides.getCurrentPosition());
     }
 
     //intake
     public void Intake(){
-
-        if((gamepad1.left_trigger) > 0.5 && t1.seconds() > 0.5 &&intake.getPower() == 0){
-            intake.setPower(-0.75);
-        }else if ((gamepad1.left_trigger) > 0.5 && t1.seconds() > 0.5 && intake.getPower() == -1) {
+        if((gamepad1.left_stick_button)){
+            intake.setPower(-1);
+        }else if (gamepad1.right_stick_button) {
             intake.setPower(0);
+        }
+        if ((gamepad1.left_trigger) > 0.5 && t1.seconds() > 0.5){
+            intake.setPower(1);
         }
     }
 
@@ -246,13 +239,15 @@ public class FormulaRTeleOp extends OpMode {
 
     @Override
     public void init_loop() {
-        targetPosition = initPosition;
-//        slides.setPower(linearSlideEncSpeed(targetPosition, 0.75));
-//        slides2.setPower(linearSlideEncSpeed(-targetPosition, 0.75));
+        targetPositionA = initPositionA;
+        targetPositionB = initPositionB;
+        slides.setPower(linearSlideEncSpeed(targetPositionA, 0.75));
+//        slides2.setPower(linearSlideEncSpeed(targetPositionB, 0.75));
 
         telemetry.addData("a: ", ifPressed(gamepad1.a));
-        telemetry.addData("initPos: ", initPosition);
-        telemetry.addData("targetPosition: ", targetPosition);
+        telemetry.addData("initPos: ", initPositionA);
+        telemetry.addData("targetPositionA: ", targetPositionA);
+        telemetry.addData("targetPositionB: ", targetPositionB);
         telemetry.addData("slides Positiion", slides.getCurrentPosition());
         telemetry.addData("slides 2 Positiion", slides2.getCurrentPosition());
         telemetry.addData("WobbleArmLPosition", WobbleArmL.getPosition());
@@ -277,12 +272,13 @@ public class FormulaRTeleOp extends OpMode {
         WobbleArm();
 
 
+
         telemetry.addData("servoArmPosL", WobbleArmL.getPosition());
         telemetry.addData("servoArmPosR", WobbleArmR.getPosition());
         telemetry.addData("intakePower", intake.getPower());
         telemetry.addData("gampad1.a: ", ifPressed(gamepad1.a));
-        telemetry.addData("initPos: ", initPosition);
-        telemetry.addData("targetPosition: ", targetPosition);
+        telemetry.addData("initPos: ", initPositionA);
+        telemetry.addData("targetPosition: ", targetPositionA);
         telemetry.addData("slides  Positiion", slides.getCurrentPosition());
         telemetry.addData("slides 2 Positiion", slides2.getCurrentPosition());
         telemetry.addData("WobbleArmLPosition", WobbleArmL.getPosition());

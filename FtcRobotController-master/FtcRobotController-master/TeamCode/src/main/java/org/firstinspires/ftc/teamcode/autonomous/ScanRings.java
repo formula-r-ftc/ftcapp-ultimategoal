@@ -47,6 +47,11 @@ public class ScanRings<tfod> extends OpMode {
     ElapsedTime t1 = new ElapsedTime();
     ElapsedTime t2 = new ElapsedTime();
 
+    double RBPreviousValue;
+    double RFPreviousValue;
+    double LFPreviousValue;
+    double LBPreviousValue;
+
     //  this gives you the distance and speed of encoders
     double encoderSpeed(double targetPosition, double maxSpeed){
         double AverageEncoderPosition = 0 ; //(RFMotor.getCurrentPosition()  + LFMotor.getCurrentPosition() +RBMotor.getCurrentPosition()+ LBMotor.getCurrentPosition())/4;
@@ -103,8 +108,6 @@ public class ScanRings<tfod> extends OpMode {
         }
     }
 
-
-
     //Start of tensorflow program
     boolean Single = false;
     boolean Quad = false;
@@ -149,9 +152,9 @@ public class ScanRings<tfod> extends OpMode {
             }
 
         }
-        if (tfod != null) {
-            tfod.shutdown();
-        }
+//        if (tfod != null) {
+//            tfod.shutdown();
+//        }
 
     }
 
@@ -203,23 +206,64 @@ public class ScanRings<tfod> extends OpMode {
 
     public void moveTargetZoneA(){
         if(moveNone() == true){
-            rampUp(0,0,0,0,0);
-            telemetry.addData("Sensed", "None" + " and going to target zone A");
+            if (!trip1) {
+                rampUp(0, 0, 0, 0, 0);
+                telemetry.addData("Sensed", "None" + " and going to target zone A");
+                trip1 = tripLoop();
+            }
         }
     }
 
     public void moveTargetZoneB(){
-
         if (moveSingle() == true){
-            rampUp(one, 0, 0,0.5,0.5);
-            telemetry.addData("Sensed", "Single" + " and going to target zone B");
+            if (!trip1){
+                rampUp(one, 0, 0,0.5,0.5);
+                trip1 = tripLoop();
+                telemetry.addData("Sensed", "Single" + " and going to target zone B");
+            }
+
         }
     }
 
     public void moveTargetZoneC(){
-        if(moveNone() == true){
-            rampUp(one*4,0,0,0.5,0);
-            telemetry.addData("Sensed", "None" + " and going to target zone C");
+        if(moveQuad() == true){
+            if(!trip1){
+                rampUp(one*4,0,0,0.5,0);
+                 telemetry.addData("Sensed", "None" + " and going to target zone C");
+                trip1 = tripLoop();
+            }
+        }
+    }
+
+    boolean trip1 = false;
+
+    boolean tripLoopDone = false;
+    boolean EncoderPower;
+    boolean tripLoop(){
+        double AverageEncPower = (RFMotor.getPower() + LFMotor.getPower() + RBMotor.getPower() + LBMotor.getPower())/4;
+
+        if (AverageEncPower == 0){
+            EncoderPower = false;
+        } else{
+            EncoderPower = true;
+        }
+
+        if (!tripLoopDone && EncoderPower){
+            tripLoopDone = true;
+        }
+
+        if (tripLoopDone && !EncoderPower){
+
+            RFPreviousValue = RFMotor.getCurrentPosition();
+            RBPreviousValue = RBMotor.getCurrentPosition();
+            LFPreviousValue = RFMotor.getCurrentPosition();
+            LBPreviousValue = RFMotor.getCurrentPosition();
+            return  true;
+        }
+        else {
+            telemetry.addData("tripLoop return:", "FALSE" );
+            return false;
+
         }
     }
 
@@ -295,6 +339,13 @@ public class ScanRings<tfod> extends OpMode {
     public void start() {
         t1.reset();
         t2.reset();
+    }
+
+    @Override
+    public void stop() {
+        if (tfod != null){
+            tfod.shutdown();
+        }
     }
 
     @Override
