@@ -114,9 +114,7 @@ public class ScanRings<tfod> extends OpMode {
     boolean None = false;
 
     public void scan(){
-        Single = false;
-         Quad = false;
-         None = false;
+
         if (tfod != null) {
             // getUpdatedRecognitions() will return null if no new information is available since
             // the last time that call was made.
@@ -138,12 +136,18 @@ public class ScanRings<tfod> extends OpMode {
                         if (recognition.getLabel().equals("Single")) {
                             telemetry.addData("Target Zone", "B");
                              Single = true;
+                             Quad = false;
+                             None = false;
                         } else if (recognition.getLabel().equals("Quad")) {
                             telemetry.addData("Target Zone", "C");
                              Quad = true;
+                             Single = false;
+                             None = false;
                         } else {
                             telemetry.addData("Target Zone", "None");
-                           //  None = true;
+                            None = true;
+                            Quad = false;
+                            Single = false;
                         }
                     }
                 }
@@ -152,35 +156,12 @@ public class ScanRings<tfod> extends OpMode {
             }
 
         }
-//        if (tfod != null) {
-//            tfod.shutdown();
-//        }
-
-    }
-
-    public boolean moveSingle() {
-        if (Single == true){
-            return true;
-        } else {
-            return false;
+        if (tfod != null) {
+            tfod.shutdown();
         }
+
     }
 
-    public boolean moveQuad() {
-        if (Quad == true){
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public boolean moveNone() {
-        if (None == true){
-            return true;
-        } else {
-            return false;
-        }
-    }
 
     public void initVuforia() {
 
@@ -205,7 +186,7 @@ public class ScanRings<tfod> extends OpMode {
 // THIS IS WHERE THE PROGRAM STARTS---------------------------------------------------------------------------------------------------------------------------------------------------------------------/
 
     public void moveTargetZoneA(){
-        if(moveNone() == true){
+        if(None == true){
             if (!trip1) {
                 rampUp(0, 0, 0, 0, 0);
                 telemetry.addData("Sensed", "None" + " and going to target zone A");
@@ -215,7 +196,7 @@ public class ScanRings<tfod> extends OpMode {
     }
 
     public void moveTargetZoneB(){
-        if (moveSingle() == true){
+        if (Single == true){
             if (!trip1){
                 rampUp(one, 0, 0,0.5,0.5);
                 trip1 = tripLoop();
@@ -226,7 +207,7 @@ public class ScanRings<tfod> extends OpMode {
     }
 
     public void moveTargetZoneC(){
-        if(moveQuad() == true){
+        if(Quad == true){
             if(!trip1){
                 rampUp(one*4,0,0,0.5,0);
                  telemetry.addData("Sensed", "None" + " and going to target zone C");
@@ -304,14 +285,11 @@ public class ScanRings<tfod> extends OpMode {
 
     @Override
     public void init() {
-
+        initHardware();
         initVuforia();
         initTfod();
 
-        initHardware();
-
-
-    }
+       }
 
 
 

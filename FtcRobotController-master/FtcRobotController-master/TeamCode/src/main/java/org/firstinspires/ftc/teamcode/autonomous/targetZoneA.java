@@ -35,7 +35,7 @@ public class targetZoneA extends OpMode {
 
     double AverageEconderPosition;
 
-    //  this gives you the distance and speed of encoders
+    //  this gives you the distance and speed of motors
     double encoderSpeed(double targetPosition, double maxSpeed){
         AverageEconderPosition = (RFMotor.getCurrentPosition() - RFPreviousValue + LFMotor.getCurrentPosition() - LFPreviousValue + RBMotor.getCurrentPosition() - RBPreviousValue + LBMotor.getCurrentPosition() - LBPreviousValue) / 4;
         double distance = targetPosition - AverageEconderPosition;
