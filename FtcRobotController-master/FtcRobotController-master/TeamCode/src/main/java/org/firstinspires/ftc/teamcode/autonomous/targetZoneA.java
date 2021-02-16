@@ -67,7 +67,7 @@ public class targetZoneA extends OpMode {
     }
 
     public void rampUp(double distance, double heading, double time, double maxSpeed, double busyTime) {
-        double AvgEncPos = (RFMotor.getCurrentPosition() + LFMotor.getCurrentPosition() + RBMotor.getCurrentPosition() + LBMotor.getCurrentPosition()) / 4;
+        double AvgEncPos = (RFMotor.getCurrentPosition() - RFPreviousValue + LFMotor.getCurrentPosition() - LFPreviousValue + RBMotor.getCurrentPosition() - RBPreviousValue + LBMotor.getCurrentPosition() - LBPreviousValue) / 4;
         double AccelerationSlope = maxSpeed / time;
         double power = t1.seconds() * AccelerationSlope;
 //            double previousValue = AvgEncPos;
