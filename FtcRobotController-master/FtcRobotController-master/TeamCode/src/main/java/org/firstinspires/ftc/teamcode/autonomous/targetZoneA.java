@@ -213,12 +213,12 @@ public class targetZoneA extends OpMode {
     public void loop() {
 //rampUpTurn(0,95,0.5,0.3,5);
         if (!trip1) {
-            rampUp(4.8 * one, -2, 0.5, 0.5, 5);
+            rampUp(2.8 * one, -40, 0.5, 0.5, 5);
             trip1 = tripLoop();
             telemetry.addData("trip", "1");
         }
         else if(trip1 && !trip2) {
-            rampUpTurn(-2 * one,-20, 0.5, 0.2, 5);
+            rampUp(2 * one,-20, 0.5, 0.2, 5);
             trip2 = tripLoop();
             telemetry.addData("trip", "2");
 
