@@ -67,7 +67,7 @@ public class targetZoneA extends OpMode {
     }
 
     public void rampUp(double distance, double heading, double time, double maxSpeed, double busyTime) {
-        double AvgEncPos = (RFMotor.getCurrentPosition() + LFMotor.getCurrentPosition() + RBMotor.getCurrentPosition() + LBMotor.getCurrentPosition()) / 4;
+        double AvgEncPos = (RFMotor.getCurrentPosition() - RFPreviousValue + LFMotor.getCurrentPosition() - LFPreviousValue + RBMotor.getCurrentPosition() - RBPreviousValue + LBMotor.getCurrentPosition() - LBPreviousValue) / 4;
         double AccelerationSlope = maxSpeed / time;
         double power = t1.seconds() * AccelerationSlope;
 //            double previousValue = AvgEncPos;
@@ -213,12 +213,12 @@ public class targetZoneA extends OpMode {
     public void loop() {
 //rampUpTurn(0,95,0.5,0.3,5);
         if (!trip1) {
-            rampUp(4.8 * one, -2, 0.5, 0.5, 5);
+            rampUp(2.8 * one, -40, 0.5, 0.5, 5);
             trip1 = tripLoop();
             telemetry.addData("trip", "1");
         }
         else if(trip1 && !trip2) {
-            rampUpTurn(-2 * one,-20, 0.5, 0.2, 5);
+            rampUp(2 * one,-20, 0.5, 0.2, 5);
             trip2 = tripLoop();
             telemetry.addData("trip", "2");
 
