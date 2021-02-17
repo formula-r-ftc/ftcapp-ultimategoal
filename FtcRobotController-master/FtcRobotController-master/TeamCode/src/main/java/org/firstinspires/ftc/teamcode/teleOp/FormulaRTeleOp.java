@@ -3,23 +3,19 @@ package org.firstinspires.ftc.teamcode.teleOp;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.exception.TargetPositionNotSetException;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import java.lang.annotation.Target;
 import java.util.ArrayList;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @TeleOp
 public class FormulaRTeleOp extends OpMode {
-// initializing and variables
+
+    //initializing and variables
     BNO055IMU imu;
     Orientation angles;
     private DcMotor RFMotor;
@@ -45,8 +41,8 @@ public class FormulaRTeleOp extends OpMode {
 
     ArrayList<Boolean> booleanArray = new ArrayList<Boolean>();
 
+    //First driver controls start
     //DriveTrian method
-   
     public void moveDriveTrain(){
         if(gamepad1.left_bumper){
             LFMotor.setPower(0.3*(gamepad1.right_stick_y));
@@ -61,35 +57,7 @@ public class FormulaRTeleOp extends OpMode {
         }
     }
 
-    //Shooter method
-
-    public void shoot() {
-
-        if((gamepad1.right_trigger) > 0.3 && t1.seconds() > 0.3 && Shooter.getPower() == 0){
-            Shooter.setPower(1);
-        }else if ((gamepad1.right_trigger) > 0.3 && t1.seconds() > 0.3){
-            Shooter.setPower(0);
-        }
-    }
-
-    //sleep methods
-
-    public final void idle() {
-        // Otherwise, yield back our thread scheduling quantum and give other threads at
-        // our priority level a chance to run
-        Thread.yield();
-    }
-    public final void sleep(long milliseconds) {
-        try {
-            Thread.sleep(milliseconds);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-    }
-
-
-    // pusher method
-
+    //pusher method
     public void push(){
         boolean g1rb = gamepad1.right_bumper;
         boolean toggleReady = true;
@@ -115,26 +83,45 @@ public class FormulaRTeleOp extends OpMode {
         }
     }
 
+    //First Driver controls done
+
+    //Second Driver controls start
+    //Shooter method
+    public void shoot() {
+
+        if((gamepad1.right_trigger) > 0.3 && t1.seconds() > 0.3 && Shooter.getPower() == 0){
+            Shooter.setPower(1);
+        }else if ((gamepad1.right_trigger) > 0.3 && t1.seconds() > 0.3){
+            Shooter.setPower(0);
+        }
+    }
+
+    //Wobble arm method
     public void WobbleArm() {
         if (gamepad2.right_bumper) {
-                WobbleArmL.setPosition(0.35);
-                WobbleArmR.setPosition(0.1);
-
+            WobbleArmL.setPosition(0.35);
+            WobbleArmR.setPosition(0.1);
         } else{
             WobbleArmL.setPosition(0);
             WobbleArmR.setPosition(0.5);
         }
-    telemetry.addData("WobbleArmLPosition", WobbleArmL);
-    telemetry.addData("WobbleArmRPosition", WobbleArmR);
+        telemetry.addData("WobbleArmLPosition", WobbleArmL);
+        telemetry.addData("WobbleArmRPosition", WobbleArmR);
     }
 
-    public void moveLinearSlide(){
-        slides.setPower(gamepad1.left_trigger);
-
+    //intake method
+    public void Intake(){
+        if((gamepad1.left_stick_button)){
+            intake.setPower(-1);
+        }else if (gamepad1.right_stick_button) {
+            intake.setPower(0);
+        }
+        if ((gamepad1.left_trigger) > 0.5 && t1.seconds() > 0.5){
+            intake.setPower(1);
+        }
     }
 
     //Linear Slide Methods
-
     double initPositionA = 1900;
     double initPositionB = 1408;
     double linearSlideInitPos = 0;
@@ -147,35 +134,26 @@ public class FormulaRTeleOp extends OpMode {
 
     double targetPositionA;
     double targetPositionB;
-    public void slideButtons(){
 
+    public void slideButtons(){
         if(ifPressed(gamepad1.a)){
-           targetPositionA = 1600;
+            targetPositionA = -1500 + initPositionA;
+            targetPositionB = 1500 + initPositionB;
 
         } else if (ifPressed(gamepad1.x) ){
-         //   targetPositionA = -1500 + initPositionA;
+            targetPositionA = 1500 + initPositionA;
+            targetPositionB = -1500 + initPositionB;
 
-        }else if (ifPressed(gamepad1.b) && targetPositionA != initPositionA){
+        }else if (ifPressed(gamepad1.a) && targetPositionA != initPositionA){
             targetPositionA = initPositionA;
+            targetPositionB = initPositionB;
         }
-            booleanIncrementer = 0;
-            slides.setPower(linearSlideEncSpeed(targetPositionA, 0.75));
-//            slides2.setPower(linearSlideEncSpeed(-targetPositionB, 0.75));
+        booleanIncrementer = 0;
+        slides.setPower(linearSlideEncSpeed(targetPositionA, 0.75));
+        slides2.setPower(linearSlideEncSpeed(-targetPositionB,0.75));
 
 
-            telemetry.addData("slidesposition ", slides.getCurrentPosition());
-    }
-
-    //intake
-    public void Intake(){
-        if((gamepad1.left_stick_button)){
-            intake.setPower(-1);
-        }else if (gamepad1.right_stick_button) {
-            intake.setPower(0);
-        }
-        if ((gamepad1.left_trigger) > 0.5 && t1.seconds() > 0.5){
-            intake.setPower(1);
-        }
+        telemetry.addData("slidesposition ", slides.getCurrentPosition());
     }
 
 
@@ -195,6 +173,7 @@ public class FormulaRTeleOp extends OpMode {
 
         booleanIncrementer = booleanIncrementer+1;
         return output;
+
     }
 
     private boolean ifPressedFloat(double button){
@@ -214,7 +193,22 @@ public class FormulaRTeleOp extends OpMode {
 
         booleanIncrementer = booleanIncrementer+1;
         return output;
+
     }
+
+    //sleep methods
+    public final void idle() {
+        Thread.yield();
+    }
+    public final void sleep(long milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+
 
     @Override
     public void init() {
@@ -231,10 +225,6 @@ public class FormulaRTeleOp extends OpMode {
         WobbleArmL = hardwareMap.get(Servo.class, "WobbleArmL");
         WobbleArmR = hardwareMap.get(Servo.class, "WobbleArmR");
 
-
-
-
-
     }
 
     @Override
@@ -242,7 +232,6 @@ public class FormulaRTeleOp extends OpMode {
         targetPositionA = initPositionA;
         targetPositionB = initPositionB;
         slides.setPower(linearSlideEncSpeed(targetPositionA, 0.75));
-//        slides2.setPower(linearSlideEncSpeed(targetPositionB, 0.75));
 
         telemetry.addData("a: ", ifPressed(gamepad1.a));
         telemetry.addData("initPos: ", initPositionA);
@@ -259,7 +248,6 @@ public class FormulaRTeleOp extends OpMode {
     public void start(){
         t2.reset();
 
-
     }
 
     @Override
@@ -270,8 +258,6 @@ public class FormulaRTeleOp extends OpMode {
         slideButtons();
         Intake();
         WobbleArm();
-
-
 
         telemetry.addData("servoArmPosL", WobbleArmL.getPosition());
         telemetry.addData("servoArmPosR", WobbleArmR.getPosition());
