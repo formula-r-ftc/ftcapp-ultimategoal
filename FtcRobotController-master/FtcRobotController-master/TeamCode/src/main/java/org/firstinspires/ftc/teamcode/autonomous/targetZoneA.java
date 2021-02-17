@@ -67,16 +67,13 @@ public class targetZoneA extends OpMode {
     }
 
     public void rampUp(double distance, double heading, double time, double maxSpeed, double busyTime) {
-        double AvgEncPos = (RFMotor.getCurrentPosition() + LFMotor.getCurrentPosition() + RBMotor.getCurrentPosition() + LBMotor.getCurrentPosition()) / 4;
+        double AvgEncPos = (RFMotor.getCurrentPosition() - RFPreviousValue + LFMotor.getCurrentPosition() - LFPreviousValue + RBMotor.getCurrentPosition() - RBPreviousValue + LBMotor.getCurrentPosition() - LBPreviousValue) / 4;
         double AccelerationSlope = maxSpeed / time;
         double power = t1.seconds() * AccelerationSlope;
-//            double previousValue = AvgEncPos;
-//            double finalDistance = previousValue + distance;
         if (Math.abs(power) < Math.abs(encoderSpeed(distance, maxSpeed))) { // if acceleration is less than speed
             setTurnPower(turn(heading), power);  //then set motor power to turn towards heading and accelerate until max speed
         } else {
             if (!(Math.abs(distance - AvgEncPos) < 80)) {
-//                    if (runtime.seconds() < busyTime) {
                 telemetry.addData("motor is: ", "busy");
                 setTurnPower(turn(heading), encoderSpeed(distance, maxSpeed));// otherwise keep motor power to heading and stop at the target Encoder Position
             } else {
@@ -98,8 +95,7 @@ public class targetZoneA extends OpMode {
         if (Math.abs(power) < Math.abs(encoderSpeed(distance, maxSpeed))) { // if acceleration is less than speed
             setTurnPower(turn(heading), power);  //then set motor power to turn towards heading and accelerate until max speed
         } else {
-            if (!(Math.abs(heading - getHeading()) < 11)) {
-                //                   if (runtime.seconds() < busyTime) {
+            if (!(Math.abs(heading - getHeading()) < 5)) {
                 telemetry.addData("motor is: ", "busy");
                 setTurnPower(turn(heading), encoderSpeed(distance, maxSpeed));// otherwise keep motor power to heading and stop at the target Encoder Position
             } else {
@@ -213,21 +209,22 @@ public class targetZoneA extends OpMode {
     public void loop() {
 //rampUpTurn(0,95,0.5,0.3,5);
         if (!trip1) {
-            rampUp(2.8 * one, -40, 0.5, 0.5, 5);
+            rampUp(2.15 * one, -45, 0.5, 0.5, 5);
             trip1 = tripLoop();
             telemetry.addData("trip", "1");
         }
         else if(trip1 && !trip2) {
-            rampUp(2 * one,-20, 0.5, 0.2, 5);
+            rampUpTurn(0 * one,0, 0.5, 0.4, 5);
             trip2 = tripLoop();
             telemetry.addData("trip", "2");
 
         }
-        //else if (trip2 && !trip3){
-//            rampUp(one, 90, 0.5, 0.3, 5);
-//            trip3 = tripLoop();
-//            telemetry.addData("trip", "3");
-//        } else if(trip3 && !trip4){
+        else if (trip2 && !trip3){
+            rampUp(2.7 * one, 0, 0.5, 0.3, 5);
+            trip3 = tripLoop();
+            telemetry.addData("trip", "3");
+    }
+//        else if(trip3 && !trip4){
 //            rampUpTurn(-one, 0,0.5,0.3,5);
 //            trip4 = tripLoop();
 //            telemetry.addData("trip", "4");
