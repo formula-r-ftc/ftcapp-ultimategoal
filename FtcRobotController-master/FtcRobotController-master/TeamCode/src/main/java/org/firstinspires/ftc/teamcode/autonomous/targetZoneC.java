@@ -215,21 +215,21 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
                 telemetry.addData("trip", "1");
             }
             else if(trip1 && !trip2) {
-                rampUpTurn(0 * one,0, 0.5, 0.4, 5);
+                rampUpTurn(0,0, 0.5, 0.4, 5);
                 trip2 = tripLoop();
                 telemetry.addData("trip", "2");
 
             }
             else if (trip2 && !trip3){
-                rampUp(2.7 * one, 0, 0.5, 0.3, 5);
+                rampUp(6.55 * one, 0, 0.5, 0.7, 5);
                 trip3 = tripLoop();
                 telemetry.addData("trip", "3");
                 
-            } else if(trip3 && !trip4){
-            rampUpTurn(2.5* one, 0,0.5,0.3,5);
-            trip4 = tripLoop();
-            telemetry.addData("trip", "4");
-        }
+            }  else if (trip3 && !trip4){
+                rampUp(2.1* -one, 0,0.5,0.5,5);
+                trip4 = tripLoop();
+                telemetry.addData("trip", "4");
+            }
 
 
             telemetry.addData("Runtime: ", runtime.seconds());
@@ -247,4 +247,4 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
         }
     }
 
-}
+

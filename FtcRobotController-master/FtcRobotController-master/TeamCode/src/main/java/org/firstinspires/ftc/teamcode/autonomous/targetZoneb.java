@@ -219,6 +219,10 @@ public class targetZoneb extends OpMode {
             rampUp(3.5 * one, -15, 0.5, 0.6, 5);
             trip3 = tripLoop();
             telemetry.addData("trip", "3");
+        }  else if (trip3 && !trip4){
+            rampUp(1* -one, 0,0.5,0.2,5);
+            trip4 = tripLoop();
+            telemetry.addData("trip", "4");
         }
 
         telemetry.addData("Runtime: ", runtime.seconds());

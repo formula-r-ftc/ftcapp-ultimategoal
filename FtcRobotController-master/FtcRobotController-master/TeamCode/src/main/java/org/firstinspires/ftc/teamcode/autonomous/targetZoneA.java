@@ -37,8 +37,8 @@ public class targetZoneA extends OpMode {
 
     //  this gives you the distance and speed of motors
     double encoderSpeed(double targetPosition, double maxSpeed){
-        AverageEconderPosition = (RFMotor.getCurrentPosition() - RFPreviousValue + LFMotor.getCurrentPosition() - LFPreviousValue + RBMotor.getCurrentPosition() - RBPreviousValue + LBMotor.getCurrentPosition() - LBPreviousValue) / 4;
-        double distance = targetPosition - AverageEconderPosition;
+        AverageEncoderPosition = (RFMotor.getCurrentPosition() - RFPreviousValue + LFMotor.getCurrentPosition() - LFPreviousValue + RBMotor.getCurrentPosition() - RBPreviousValue + LBMotor.getCurrentPosition() - LBPreviousValue) / 4;
+        double distance = targetPosition - AverageEncoderPosition;
         //telemetry.addData("Encoder Speed distance",distance);
         double speed = Range.clip(distance/500, -maxSpeed, maxSpeed); // clip the speed
         return speed;
@@ -217,18 +217,17 @@ public class targetZoneA extends OpMode {
             rampUpTurn(0 * one,0, 0.5, 0.4, 5);
             trip2 = tripLoop();
             telemetry.addData("trip", "2");
-
         }
         else if (trip2 && !trip3){
             rampUp(2.7 * one, 0, 0.5, 0.3, 5);
             trip3 = tripLoop();
             telemetry.addData("trip", "3");
-    }
-//        else if(trip3 && !trip4){
-//            rampUpTurn(2.5* one, 0,0.5,0.3,5);
-//            trip4 = tripLoop();
-//            telemetry.addData("trip", "4");
-//        }
+        }
+        else if (trip3 && !trip4){
+            rampUp(.5 * one, 0,0.5,0.5,5);
+            trip4 = tripLoop();
+            telemetry.addData("trip", "4");
+        }
 
 
             telemetry.addData("Runtime: ", runtime.seconds());

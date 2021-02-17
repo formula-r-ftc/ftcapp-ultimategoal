@@ -42,19 +42,22 @@ public class ScanRings<tfod> extends OpMode {
     DcMotor LBMotor;
     DcMotor RBMotor;
 
+    double RFPreviousValue = 0;
+    double RBPreviousValue = 0;
+    double LFPreviousValue = 0;
+    double LBPreviousValue = 0;
+
+
     double one = 537.6;
 
     ElapsedTime t1 = new ElapsedTime();
-    ElapsedTime t2 = new ElapsedTime();
+    ElapsedTime runtime = new ElapsedTime();
 
-    double RBPreviousValue;
-    double RFPreviousValue;
-    double LFPreviousValue;
-    double LBPreviousValue;
+    double AverageEncoderPosition;
 
-    //  this gives you the distance and speed of encoders
+    //  this gives you the distance and speed of motors
     double encoderSpeed(double targetPosition, double maxSpeed){
-        double AverageEncoderPosition = 0 ; //(RFMotor.getCurrentPosition()  + LFMotor.getCurrentPosition() +RBMotor.getCurrentPosition()+ LBMotor.getCurrentPosition())/4;
+        AverageEncoderPosition = (RFMotor.getCurrentPosition() - RFPreviousValue + LFMotor.getCurrentPosition() - LFPreviousValue + RBMotor.getCurrentPosition() - RBPreviousValue + LBMotor.getCurrentPosition() - LBPreviousValue) / 4;
         double distance = targetPosition - AverageEncoderPosition;
         //telemetry.addData("Encoder Speed distance",distance);
         double speed = Range.clip(distance/500, -maxSpeed, maxSpeed); // clip the speed
@@ -81,20 +84,16 @@ public class ScanRings<tfod> extends OpMode {
         // telemetry.addData("turnAngle", turnAngle);
         double power = Range.clip(turnAngle / 50, -0.3, 0.3);
         return power;
-
     }
 
-    public void rampUp(double distance, double heading, double time, double maxSpeed,double busyTime){
-        double AvgEncPos = (RFMotor.getCurrentPosition() + LFMotor.getCurrentPosition() + RBMotor.getCurrentPosition() + LBMotor.getCurrentPosition()) / 4;
+    public void rampUp(double distance, double heading, double time, double maxSpeed, double busyTime) {
+        double AvgEncPos = (RFMotor.getCurrentPosition() - RFPreviousValue + LFMotor.getCurrentPosition() - LFPreviousValue + RBMotor.getCurrentPosition() - RBPreviousValue + LBMotor.getCurrentPosition() - LBPreviousValue) / 4;
         double AccelerationSlope = maxSpeed / time;
         double power = t1.seconds() * AccelerationSlope;
-//            double previousValue = AvgEncPos;
-//            double finalDistance = previousValue + distance;
         if (Math.abs(power) < Math.abs(encoderSpeed(distance, maxSpeed))) { // if acceleration is less than speed
             setTurnPower(turn(heading), power);  //then set motor power to turn towards heading and accelerate until max speed
         } else {
             if (!(Math.abs(distance - AvgEncPos) < 80)) {
-//                    if (runtime.seconds() < busyTime) {
                 telemetry.addData("motor is: ", "busy");
                 setTurnPower(turn(heading), encoderSpeed(distance, maxSpeed));// otherwise keep motor power to heading and stop at the target Encoder Position
             } else {
@@ -104,11 +103,34 @@ public class ScanRings<tfod> extends OpMode {
                 RBMotor.setPower(0);
                 LBMotor.setPower(0);
                 setTurnPower(0, 0);
+
             }
         }
     }
 
-    //Start of tensorflow program
+    public void rampUpTurn (double distance, double heading, double time, double maxSpeed, double busyTime) {
+        double AvgEncPos = (RFMotor.getCurrentPosition() + LFMotor.getCurrentPosition() + RBMotor.getCurrentPosition() + LBMotor.getCurrentPosition()) / 4;
+        double AccelerationSlope = maxSpeed / time;
+        double power = t1.seconds() * AccelerationSlope;
+        if (Math.abs(power) < Math.abs(encoderSpeed(distance, maxSpeed))) { // if acceleration is less than speed
+            setTurnPower(turn(heading), power);  //then set motor power to turn towards heading and accelerate until max speed
+        } else {
+            if (!(Math.abs(heading - getHeading()) < 5)) {
+                telemetry.addData("motor is: ", "busy");
+                setTurnPower(turn(heading), encoderSpeed(distance, maxSpeed));// otherwise keep motor power to heading and stop at the target Encoder Position
+            } else {
+                telemetry.addData("motor is: ", "not busy");
+                RFMotor.setPower(0);
+                LFMotor.setPower(0);
+                RBMotor.setPower(0);
+                LBMotor.setPower(0);
+                setTurnPower(0, 0);
+
+            }
+        }
+    }
+
+    //Start of tensorflow program -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     boolean Single = false;
     boolean Quad = false;
     boolean None = false;
@@ -184,23 +206,54 @@ public class ScanRings<tfod> extends OpMode {
     }
 
 // THIS IS WHERE THE PROGRAM STARTS---------------------------------------------------------------------------------------------------------------------------------------------------------------------/
+boolean trip1 = false;
+    boolean trip2 = false;
+    boolean trip3 = false;
+    boolean trip4 = false;
+    boolean trip5 = false;
+    boolean trip6 = false;
+    boolean trip7 = false;
+    boolean trip8 = false;
 
     public void moveTargetZoneA(){
         if(None == true){
             if (!trip1) {
-                rampUp(0, 0, 0, 0, 0);
-                telemetry.addData("Sensed", "None" + " and going to target zone A");
+                rampUp(2.15 * one, -45, 0.5, 0.5, 5);
                 trip1 = tripLoop();
+                telemetry.addData("trip", "1");
             }
+            else if(trip1 && !trip2) {
+                rampUpTurn(0 * one,0, 0.5, 0.4, 5);
+                trip2 = tripLoop();
+                telemetry.addData("trip", "2");
+            }
+            else if (trip2 && !trip3){
+                rampUp(3.7 * one, 0, 0.5, 0.3, 5);
+                trip3 = tripLoop();
+                telemetry.addData("trip", "3");
+            }
+            
         }
     }
 
     public void moveTargetZoneB(){
         if (Single == true){
-            if (!trip1){
-                rampUp(one, 0, 0,0.5,0.5);
+            if (!trip1) {
+                rampUp(2.9 * one, 15, 0.5, 0.5, 5);
                 trip1 = tripLoop();
-                telemetry.addData("Sensed", "Single" + " and going to target zone B");
+                telemetry.addData("trip", "1");
+            } else if (trip1 && !trip2){
+                rampUpTurn(0, -10, 0.5, 0.4, 5);
+                trip2 = tripLoop();
+                telemetry.addData("trip", "2");
+            } else if (trip2 && !trip3){
+                rampUp(3.5 * one, -15, 0.5, 0.6, 5);
+                trip3 = tripLoop();
+                telemetry.addData("trip", "3");
+            }  else if (trip3 && !trip4){
+                rampUp(1* -one, 0,0.5,0.2,5);
+                trip4 = tripLoop();
+                telemetry.addData("trip", "4");
             }
 
         }
@@ -208,15 +261,30 @@ public class ScanRings<tfod> extends OpMode {
 
     public void moveTargetZoneC(){
         if(Quad == true){
-            if(!trip1){
-                rampUp(one*4,0,0,0.5,0);
-                 telemetry.addData("Sensed", "None" + " and going to target zone C");
+            if (!trip1) {
+                rampUp(2.15 * one, -45, 0.5, 0.5, 5);
                 trip1 = tripLoop();
+                telemetry.addData("trip", "1");
+            }
+            else if(trip1 && !trip2) {
+                rampUpTurn(0,0, 0.5, 0.4, 5);
+                trip2 = tripLoop();
+                telemetry.addData("trip", "2");
+
+            }
+            else if (trip2 && !trip3){
+                rampUp(6.55 * one, 0, 0.5, 0.7, 5);
+                trip3 = tripLoop();
+                telemetry.addData("trip", "3");
+
+            }  else if (trip3 && !trip4){
+                rampUp(2.1* -one, 0,0.5,0.5,5);
+                trip4 = tripLoop();
+                telemetry.addData("trip", "4");
             }
         }
     }
 
-    boolean trip1 = false;
 
     boolean tripLoopDone = false;
     boolean EncoderPower;
@@ -316,7 +384,6 @@ public class ScanRings<tfod> extends OpMode {
     @Override
     public void start() {
         t1.reset();
-        t2.reset();
     }
 
     @Override
