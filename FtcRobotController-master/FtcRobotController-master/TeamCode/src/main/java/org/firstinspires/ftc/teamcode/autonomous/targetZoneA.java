@@ -33,7 +33,7 @@ public class targetZoneA extends OpMode {
     ElapsedTime t1 = new ElapsedTime();
     ElapsedTime runtime = new ElapsedTime();
 
-    double AverageEconderPosition;
+    double AverageEncoderPosition;
 
     //  this gives you the distance and speed of motors
     double encoderSpeed(double targetPosition, double maxSpeed){
@@ -225,7 +225,7 @@ public class targetZoneA extends OpMode {
             telemetry.addData("trip", "3");
     }
 //        else if(trip3 && !trip4){
-//            rampUpTurn(-one, 0,0.5,0.3,5);
+//            rampUpTurn(2.5* one, 0,0.5,0.3,5);
 //            trip4 = tripLoop();
 //            telemetry.addData("trip", "4");
 //        }
