@@ -41,8 +41,9 @@ public class FormulaRTeleOp extends OpMode {
 
     ArrayList<Boolean> booleanArray = new ArrayList<Boolean>();
 
+
     //First driver controls start
-    //DriveTrian method
+    //DriveTrain method
     public void moveDriveTrain(){
         if(gamepad1.left_bumper){
             LFMotor.setPower(0.3*(gamepad1.right_stick_y));
@@ -89,9 +90,9 @@ public class FormulaRTeleOp extends OpMode {
     //Shooter method
     public void shoot() {
 
-        if((gamepad1.right_trigger) > 0.3 && t1.seconds() > 0.3 && Shooter.getPower() == 0){
+        if((gamepad2.right_trigger) > 0.3 && t1.seconds() > 0.3 && Shooter.getPower() == 0){
             Shooter.setPower(1);
-        }else if ((gamepad1.right_trigger) > 0.3 && t1.seconds() > 0.3){
+        }else if ((gamepad2.right_trigger) > 0.3 && t1.seconds() > 0.3){
             Shooter.setPower(0);
         }
     }
@@ -111,12 +112,12 @@ public class FormulaRTeleOp extends OpMode {
 
     //intake method
     public void Intake(){
-        if((gamepad1.left_stick_button)){
+        if((gamepad2.left_stick_button)){
             intake.setPower(-1);
-        }else if (gamepad1.right_stick_button) {
+        }else if (gamepad2.right_stick_button) {
             intake.setPower(0);
         }
-        if ((gamepad1.left_trigger) > 0.5 && t1.seconds() > 0.5){
+        if ((gamepad2.left_trigger) > 0.5 && t1.seconds() > 0.5){
             intake.setPower(1);
         }
     }
@@ -136,15 +137,15 @@ public class FormulaRTeleOp extends OpMode {
     double targetPositionB;
 
     public void slideButtons(){
-        if(ifPressed(gamepad1.a)){
+        if(ifPressed(gamepad2.b)){
             targetPositionA = -1500 + initPositionA;
             targetPositionB = 1500 + initPositionB;
 
-        } else if (ifPressed(gamepad1.x) ){
+        } else if (ifPressed(gamepad2.x) ){
             targetPositionA = 1500 + initPositionA;
             targetPositionB = -1500 + initPositionB;
 
-        }else if (ifPressed(gamepad1.a) && targetPositionA != initPositionA){
+        }else if (ifPressed(gamepad2.a) && targetPositionA != initPositionA){
             targetPositionA = initPositionA;
             targetPositionB = initPositionB;
         }
