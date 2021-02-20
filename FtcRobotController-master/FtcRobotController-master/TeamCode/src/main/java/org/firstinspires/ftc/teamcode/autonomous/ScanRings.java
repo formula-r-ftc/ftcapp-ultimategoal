@@ -5,6 +5,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -41,6 +42,9 @@ public class ScanRings<tfod> extends OpMode {
     DcMotor LFMotor;
     DcMotor LBMotor;
     DcMotor RBMotor;
+    DcMotor slides;
+    private Servo WobbleArmR;
+    private Servo WobbleArmL;
 
     double RFPreviousValue = 0;
     double RBPreviousValue = 0;
@@ -108,6 +112,8 @@ public class ScanRings<tfod> extends OpMode {
         }
     }
 
+
+
     public void rampUpTurn (double distance, double heading, double time, double maxSpeed, double busyTime) {
         double AvgEncPos = (RFMotor.getCurrentPosition() + LFMotor.getCurrentPosition() + RBMotor.getCurrentPosition() + LBMotor.getCurrentPosition()) / 4;
         double AccelerationSlope = maxSpeed / time;
@@ -115,7 +121,7 @@ public class ScanRings<tfod> extends OpMode {
         if (Math.abs(power) < Math.abs(encoderSpeed(distance, maxSpeed))) { // if acceleration is less than speed
             setTurnPower(turn(heading), power);  //then set motor power to turn towards heading and accelerate until max speed
         } else {
-            if (!(Math.abs(heading - getHeading()) < 5)) {
+            if (!(Math.abs(heading - getHeading()) < 7)) {
                 telemetry.addData("motor is: ", "busy");
                 setTurnPower(turn(heading), encoderSpeed(distance, maxSpeed));// otherwise keep motor power to heading and stop at the target Encoder Position
             } else {
@@ -228,10 +234,22 @@ boolean trip1 = false;
                 telemetry.addData("trip", "2");
             }
             else if (trip2 && !trip3){
-                rampUp(3.7 * one, 0, 0.5, 0.3, 5);
+                rampUp(3.15 * one, 0, 0.5, 0.5, 5);
                 trip3 = tripLoop();
                 telemetry.addData("trip", "3");
             }
+            else if (trip3 && !trip4){
+                rampUpTurn(0,-90, 0.5, 0.2,5);
+                WobbleArmL.setPosition(0.35);
+                WobbleArmR.setPosition(0.1);
+                trip4 = tripLoop();
+                telemetry.addData("trip", "4");
+            }
+//            else if (trip4 && !trip5){
+//                rampUp(0,-110,0,0,0);
+//                trip5 = tripLoop();
+//                telemetry.addData("trip", "5");
+//            }
             
         }
     }
@@ -250,6 +268,8 @@ boolean trip1 = false;
                 rampUp(3.5 * one, -15, 0.5, 0.6, 5);
                 trip3 = tripLoop();
                 telemetry.addData("trip", "3");
+                WobbleArmL.setPosition(0);
+                WobbleArmR.setPosition(0.5);
             }  else if (trip3 && !trip4){
                 rampUp(1* -one, 0,0.5,0.2,5);
                 trip4 = tripLoop();
@@ -262,7 +282,7 @@ boolean trip1 = false;
     public void moveTargetZoneC(){
         if(Quad == true){
             if (!trip1) {
-                rampUp(2.15 * one, -45, 0.5, 0.5, 5);
+                rampUp(2.2 * one, -45, 0.5, 0.5, 5);
                 trip1 = tripLoop();
                 telemetry.addData("trip", "1");
             }
@@ -271,20 +291,23 @@ boolean trip1 = false;
                 trip2 = tripLoop();
                 telemetry.addData("trip", "2");
 
+
             }
             else if (trip2 && !trip3){
                 rampUp(6.55 * one, 0, 0.5, 0.7, 5);
                 trip3 = tripLoop();
                 telemetry.addData("trip", "3");
+                WobbleArmL.setPosition(0.1);
+                WobbleArmR.setPosition(0.1   );
 
             }  else if (trip3 && !trip4){
-                rampUp(2.1* -one, 0,0.5,0.5,5);
+                WobbleArmL.setPosition(0);
+                WobbleArmR.setPosition(0.5);
+                rampUp(2.25* -one, 0,0.5,0.5,5);
                 trip4 = tripLoop();
-                telemetry.addData("trip", "4");
             }
         }
     }
-
 
     boolean tripLoopDone = false;
     boolean EncoderPower;
@@ -316,6 +339,8 @@ boolean trip1 = false;
         }
     }
 
+
+
     public void initHardware(){
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
@@ -324,7 +349,10 @@ boolean trip1 = false;
         LFMotor = hardwareMap.get(DcMotor.class, "LFMotor");
         RBMotor = hardwareMap.get(DcMotor.class, "RBMotor");
         LBMotor = hardwareMap.get(DcMotor.class, "LBMotor");
+        WobbleArmL = hardwareMap.get(Servo.class, "WobbleArmL");
+        WobbleArmR = hardwareMap.get(Servo.class, "WobbleArmR");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
+        slides = hardwareMap.get(DcMotor.class, "slides");
 
         RFMotor.setDirection(DcMotor.Direction.REVERSE);
         LFMotor.setDirection(DcMotor.Direction.FORWARD);
@@ -338,10 +366,13 @@ boolean trip1 = false;
         RBMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         LBMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+
+
         LFMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         RFMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         LBMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         RBMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+       // slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // Gyro stuff
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -349,6 +380,29 @@ boolean trip1 = false;
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
+    }
+    public void slideSpeed(double targetPosition, double maxSpeed){
+        double EncoderPosition = slides.getCurrentPosition();
+        double distance = targetPosition - EncoderPosition;
+        //telemetry.addData("Encoder Speed distance",distance);
+        double speed = Range.clip(distance/100, -maxSpeed, maxSpeed); // clip the speed
+        if (!(Math.abs(distance - EncoderPosition) < 80)){
+            slides.setPower(speed);
+        }
+    }
+
+    boolean closed = false;
+    boolean drop = false;
+    public void holdwobble(){
+        WobbleArmL.setPosition(0.49);
+        WobbleArmR.setPosition(0.31);
+        if (WobbleArmR.getPosition() == 0.31 && WobbleArmL.getPosition() == 0.49){
+            closed = true;
+        }
+        if (drop){
+            WobbleArmL.setPosition(0);
+            WobbleArmR.setPosition(0.5);
+        }
     }
 
     @Override
@@ -368,6 +422,9 @@ boolean trip1 = false;
             tfod.setZoom(2.5, 16.0/9.0);
         }
 
+
+        telemetry.addData("WobbleArmR ", WobbleArmR.getPosition());
+        telemetry.addData("WobbleArmL ", WobbleArmL.getPosition());
         telemetry.addData("LF Distance", LFMotor.getCurrentPosition());
         telemetry.addData("RF Distance", RFMotor.getCurrentPosition());
         telemetry.addData("LB Distance", LBMotor.getCurrentPosition());
@@ -379,12 +436,19 @@ boolean trip1 = false;
         telemetry.addData("Roll: ", angles.secondAngle);
         telemetry.addData("Pitch: ", angles.thirdAngle);
         telemetry.update();
+
+
+        //linear slides
+        double initPosition = slides.getCurrentPosition();
+        telemetry.addData("slide encoders;", initPosition);
+
     }
 
     @Override
     public void start() {
         t1.reset();
     }
+
 
     @Override
     public void stop() {
@@ -393,15 +457,21 @@ boolean trip1 = false;
         }
     }
 
+boolean up = false;
     @Override
     public void loop(){
-        scan();
-        moveTargetZoneA();
-        moveTargetZoneB();
-        moveTargetZoneC();
+        if (!closed){
+           holdwobble();
+        }else {
+            scan();
+            moveTargetZoneA();
+            moveTargetZoneB();
+            moveTargetZoneC();
+        }
         telemetry.addData("none: ", None);
         telemetry.addData("quad: ", Quad);
         telemetry.addData("single: ", Single);
+        telemetry.addData("Slides Encoders: ",  slides.getCurrentPosition());
         telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
         telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
         telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
