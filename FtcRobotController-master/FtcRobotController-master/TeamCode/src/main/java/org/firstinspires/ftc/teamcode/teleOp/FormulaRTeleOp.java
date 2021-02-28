@@ -82,7 +82,7 @@ public class FormulaRTeleOp extends OpMode {
                     moveDriveTrain();
                     telemetry.addData("Counter is", "push " + i);
                     telemetry.update();
-                    Pusher.setPosition(0.2);
+                    Pusher.setPosition(0.3);
                     sleep(300);
                     Pusher.setPosition(0.0);
                     sleep(330);
@@ -107,7 +107,7 @@ public class FormulaRTeleOp extends OpMode {
                     moveDriveTrain();
                     telemetry.addData("Counter is", "push " + i);
                     telemetry.update();
-                    Pusher.setPosition(0.2);
+                    Pusher.setPosition(0.3);
                     sleep(300);
                     Pusher.setPosition(0.0);
                     sleep(330);
@@ -296,8 +296,8 @@ public class FormulaRTeleOp extends OpMode {
         moveDriveTrain();
         push();
         shoot();
-      //  slideButtons();
-       Intake();
+        //slideButtons();
+        Intake();
         WobbleArm();
         linearSlides();
         push1();
