@@ -630,9 +630,9 @@ boolean trip1 = false;
                     telemetry.addData("Counter is", "push " + i);
                     telemetry.update();
                     Pusher.setPosition(0.4);
-                    sleep(300);
+                    sleep(600);
                     Pusher.setPosition(0.0);
-                    sleep(330);
+                    sleep(630);
                     x = true;
                 }
                 if (x == true) {
@@ -651,9 +651,9 @@ boolean trip1 = false;
                     telemetry.addData("Counter is", "push " + i);
                     telemetry.update();
                     Pusher.setPosition(0.4);
-                    sleep(300);
+                    sleep(600);
                     Pusher.setPosition(0.0);
-                    sleep(330);
+                    sleep(630);
                     x = true;
                 }
                 if (x == true) {
@@ -663,20 +663,20 @@ boolean trip1 = false;
             }
             //turn towards powershot 3
             else if (trip10 && !trip11) {
-                rampUpTurn(0 * one, 12.1, 0.5, 0.3, 5);
+                rampUpTurn(0 * one, 12.5, 0.5, 0.3, 5);
                 trip11 = tripLoop();
                 telemetry.addData("trip", "11");
             }
-            //slash
+            //shoot
             else if (trip11 && !trip12) {
                 boolean x = false;
                 for (int i = 0; i < 1; i++) {
                     telemetry.addData("Counter is", "push " + i);
                     telemetry.update();
                     Pusher.setPosition(0.4);
-                    sleep(300);
+                    sleep(600);
                     Pusher.setPosition(0.0);
-                    sleep(330);
+                    sleep(630);
                     x = true;
                 }
                 if (x == true) {
@@ -691,39 +691,45 @@ boolean trip1 = false;
             }
 
             else if (trip13 && !trip14) {
-                rampUp(-3.3 * one, 47.8, 0.5, 0.3, 5);
+                rampUp(-3.3 * one, 49.8, 0.5, 0.3, 5);
+                sleep(300);
                 intake.setPower(1);
                 trip14 = tripLoop();
                 telemetry.addData("trip", "14");
             }
-
             else if (trip14 && !trip15) {
-                rampUp(2 * one, 47.8, 0.5, 0.5, 5);
+                rampUp(0 * one, 47.8, 0.5, 0.3, 5);
                 trip15 = tripLoop();
                 telemetry.addData("trip", "15");
             }
+
             else if (trip15 && !trip16) {
-                rampUpTurn(0 * one, -2, 0.5, 0.3, 5);
+                rampUp(2 * one, 47.8, 0.5, 0.5, 5);
                 trip16 = tripLoop();
-                telemetry.addData("trip", "16");  
+                telemetry.addData("trip", "16");
+            }
+            else if (trip16 && !trip17) {
+                rampUpTurn(0 * one, -2, 0.5, 0.3, 5);
+                trip17= tripLoop();
+                telemetry.addData("trip", "17");
             }
 //
-            else if (trip16 && !trip17) {
-                boolean x = false;
-                for (int i = 0; i < 6; i++) {
-                    telemetry.addData("Counter is", "push " + i);
-                    telemetry.update();
-                    Pusher.setPosition(0.4);
-                    sleep(300);
-                    Pusher.setPosition(0.0);
-                    sleep(330);
-                    x = true;
-                }
-                if (x == true) {
-                    trip17 = true;
-                    telemetry.addData("trip", "17");
-                }
-            }
+//            else if (trip16 && !trip17) {
+//                boolean x = false;
+//                for (int i = 0; i < 6; i++) {
+//                    telemetry.addData("Counter is", "push " + i);
+//                    telemetry.update();
+//                    Pusher.setPosition(0.4);
+//                    sleep(600);
+//                    Pusher.setPosition(0.0);
+//                    sleep(630);
+//                    x = true;
+//                }
+//                if (x == true) {
+//                    trip17 = true;
+//                    telemetry.addData("trip", "17");
+//                }
+//            }
         }
     }
 
