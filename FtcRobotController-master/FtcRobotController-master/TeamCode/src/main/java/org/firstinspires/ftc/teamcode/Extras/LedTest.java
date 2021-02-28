@@ -2,8 +2,11 @@ package org.firstinspires.ftc.teamcode.Extras;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+@TeleOp
 
 public class LedTest extends OpMode {
 
@@ -11,7 +14,7 @@ public class LedTest extends OpMode {
     private DcMotor LFMotor;
     private DcMotor RBMotor;
     private DcMotor LBMotor;
-    private RevBlinkinLedDriver ColorLights;
+    private RevBlinkinLedDriver LED;
 
     ElapsedTime t1 = new ElapsedTime();
     ElapsedTime t2 = new ElapsedTime();
@@ -36,18 +39,16 @@ public class LedTest extends OpMode {
         double AVGPower = (RFMotor.getPower() + RBMotor.getPower() + LFMotor.getPower() + LBMotor.getPower())/4;
         if (AVGPower == 0) {
             return false;
-        } else {
-            return true;
         }
-
+        return true;
     }
 
     public void colorLights() {
 
         if (rotation() == false) {
-            ColorLights.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+            LED.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
         } else if (rotation() == true) {
-            ColorLights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
+            LED.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
         }
     }
 
@@ -57,6 +58,7 @@ public class LedTest extends OpMode {
         RBMotor = hardwareMap.get(DcMotor.class, "RBMotor");
         LFMotor = hardwareMap.get(DcMotor.class, "LFMotor");
         LBMotor = hardwareMap.get(DcMotor.class, "LBMotor");
+        LED = hardwareMap.get(RevBlinkinLedDriver.class, "LED");
 
     }
 
@@ -74,6 +76,10 @@ public class LedTest extends OpMode {
     @Override
     public void loop() {
         moveDriveTrain();
+        colorLights();
+        LED.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+        telemetry.addData("RFPOWER: ", RFMotor.getPower());
+        telemetry.update();
 
     }
 }
