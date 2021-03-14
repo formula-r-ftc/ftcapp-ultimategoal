@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="db69bf0f-6974-4427-8839-3aac44ae9ded" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/FtcRobotController-master/FtcRobotController-master/TeamCode/build.release.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/FtcRobotController-master/FtcRobotController-master/TeamCode/build.release.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FtcRobotController-master/FtcRobotController-master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/autonomous/ScanRings.java" beforeDir="false" afterPath="$PROJECT_DIR$/FtcRobotController-master/FtcRobotController-master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/autonomous/ScanRings.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FtcRobotController-master/FtcRobotController-master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleOp/FormulaRTeleOp.java" beforeDir="false" afterPath="$PROJECT_DIR$/FtcRobotController-master/FtcRobotController-master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleOp/FormulaRTeleOp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FtcRobotController-master/FtcRobotController-master/build.common.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/FtcRobotController-master/FtcRobotController-master/build.common.gradle" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1pj79tkqOcU1yytH3WtmS2G9hCV" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="android.sdk.path" value="$USER_HOME$/AppData/Local/Android/Sdk" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="reference.settings.ide.settings.file-colors" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="db69bf0f-6974-4427-8839-3aac44ae9ded" name="Default Changelist" comment="" />
+      <created>1615684497136</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1615684497136</updated>
+    </task>
+    <servers />
+  </component>
+</project>

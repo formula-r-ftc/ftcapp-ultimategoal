@@ -142,6 +142,7 @@ public class ScanRings<tfod> extends OpMode {
         }
     }
 
+
     //Start of tensorflow program -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     boolean Single = false;
     boolean Quad = false;
@@ -439,7 +440,7 @@ boolean trip1 = false;
             }
             // turn towards powershot1
             else if (trip5 && !trip6){
-                rampUpTurn(0, -6,0.5,0.1,5);
+                rampUpTurn(0, -4,0.5,0.1,5);
                 trip6 = tripLoop();
                 telemetry.addData("trip", "6");
             }
@@ -523,19 +524,25 @@ boolean trip1 = false;
             // turn towards high goal
             else if (trip13 && !trip14){
                 Shooter.setPower(0.9);
-                rampUpTurn(0, -1.5,0.5,0.3,5);
+                rampUpTurn(0, 0,0.5,0.3,5);
+                Shooter.setPower(1.0);
                 trip14 = tripLoop();
                 telemetry.addData("trip", "14");
             }
             else if(trip14 && !trip15){
-                rampUp(-0.3*one, -1.5, 0.5,0.2,5);
+                rampUp(-0.3*one, 0, 0.5,0.2,5);
                 trip15 = tripLoop();
                 telemetry.addData("trip", "15");
             }
+            else if(trip15 && !trip16){
+                rampUp(-0.5*one, 0, 0.5,0.2,5);
+                trip16 = tripLoop();
+                telemetry.addData("trip", "16");
+            }
             //shoot
-            else if (trip15 && !trip16) {
+            else if (trip16 && !trip17) {
                 boolean x = false;
-                for (int i = 0; i < 2; i++) {
+                for (int i = 0; i < 4; i++) {
                     telemetry.addData("Counter is", "push " + i);
                     telemetry.update();
                     Pusher.setPosition(0.3);
@@ -546,38 +553,50 @@ boolean trip1 = false;
                 }
                 if (x == true) {
                     intake.setPower(0);
-                    trip16 = true;
-                    telemetry.addData("trip", "16");
+                    trip17 = true;
+                    telemetry.addData("trip", "17");
                 }
             }
             // turn towards wobble
-            else if (trip16 && !trip17){
-                Shooter.setPower(0.9);
-                rampUpTurn(0, -158.5,0.5,0.3,5);
-                trip17 = tripLoop();
-                telemetry.addData("trip", "14");
-            }
-            // pick up wobble
-            else if(trip17 && !trip18){
-                rampUp(0.1 *one, -158.5, 0.5,0.6,5);
+            else if (trip17 && !trip18){
+                Shooter.setPower(0.0);
+                rampUpTurn(0, -158.5,0.5,0.5,5);
                 trip18 = tripLoop();
                 telemetry.addData("trip", "18");
             }
-            // turn towards target zone B
+            // pick up wobble
             else if (trip18 && !trip19){
+                Shooter.setPower(0.0);
+                rampUp(200, -158.5,0.5,0.5,5);
+                trip19 = tripLoop();
+                telemetry.addData("trip", "19");
+            }
+            else if (trip19 && !trip20){
                 WobbleArmL.setPosition(0.35);
                 WobbleArmR.setPosition(0.1);
-                rampUpTurn(one, 10,0.5,0.3,5);
-                trip19 = tripLoop();
-                telemetry.addData("trip", "18");
+                rampUpTurn(-1.5*one, 10,0.5,0.5,5);
+                trip20 = tripLoop();
+                telemetry.addData("trip", "20");
             }
             //deliver
+            else if(trip20 && !trip21){
+                WobbleArmL.setPosition(0);
+                WobbleArmR.setPosition(0.5);
+                rampUp(5.7*one, 10,0.5,0.7,5);
+                trip21 = tripLoop();
+                telemetry.addData("trip", "21");
+            }
             //park
+            else if(trip21 && !trip22){
+                rampUp(-2, 10,0.5,0.7,5);
+                trip22 = tripLoop();
+                telemetry.addData("trip", "22");
+            }
         }
     }
 
-    public void moveTargetZoneC(){
-        if(Quad == true){
+    public void moveTargetZoneC() {
+        if (Quad == true) {
             // turn and move in front of target zone C
             if (!trip1) {
                 rampUp(3 * one, -45, 0.5, 0.5, 5);
@@ -585,8 +604,8 @@ boolean trip1 = false;
                 telemetry.addData("trip", "1");
             }
             // straight out the robot so its facing target zone C
-            else if(trip1 && !trip2) {
-                rampUpTurn(0,0, 0.5, 0.4, 5);
+            else if (trip1 && !trip2) {
+                rampUpTurn(0, 0, 0.5, 0.4, 5);
                 trip2 = tripLoop();
                 telemetry.addData("trip", "2");
             }
@@ -600,7 +619,7 @@ boolean trip1 = false;
             }
             //turn robot towards shooting spot
             else if (trip3 && !trip4) {
-                rampUpTurn(0* one, -35, 0.5, 0.4, 5);
+                rampUpTurn(0 * one, -35, 0.5, 0.4, 5);
                 trip4 = tripLoop();
                 telemetry.addData("trip", "4");
             }
@@ -619,7 +638,7 @@ boolean trip1 = false;
             }
             //move forward
             else if (trip6 && !trip7) {
-                rampUp(0.6*one, -7, 0.5, 0.3, 5);
+                rampUp(0.6 * one, -7, 0.5, 0.3, 5);
                 trip7 = tripLoop();
                 telemetry.addData("trip", "7");
             }
@@ -640,11 +659,13 @@ boolean trip1 = false;
                     telemetry.addData("trip", "8");
                 }
             }
-                else if (trip8 && !trip9) {
-                    rampUpTurn(0 * one, 5, 0.5, 0.3, 5);
-                    trip9 = tripLoop();
-                    telemetry.addData("trip", "9");
-             }
+            // turn towards powershot 2
+            else if (trip8 && !trip9) {
+                rampUpTurn(0 * one, 5, 0.5, 0.3, 5);
+                trip9 = tripLoop();
+                telemetry.addData("trip", "9");
+            }
+            //shoot
             else if (trip9 && !trip10) {
                 boolean x = false;
                 for (int i = 0; i < 1; i++) {
@@ -663,7 +684,7 @@ boolean trip1 = false;
             }
             //turn towards powershot 3
             else if (trip10 && !trip11) {
-                rampUpTurn(0 * one, 12.5, 0.5, 0.3, 5);
+                rampUpTurn(0 * one, 14, 0, 0.5, 5);
                 trip11 = tripLoop();
                 telemetry.addData("trip", "11");
             }
@@ -684,39 +705,94 @@ boolean trip1 = false;
                     telemetry.addData("trip", "12");
                 }
             }
-            else if (trip12 && !trip13) {
-                    rampUpTurn(0 * one, 47.8, 0.5, 0.3, 5);
-                    trip13 = tripLoop();
-                    telemetry.addData("trip", "13");
-            }
 
+// ---------------------------------- JUST PICKING UP THE WOBBLE AND DELIVERIN AND PARKING-----------------------------------------------------------------------
+            // move back
+            else if (trip12 && !trip13) {
+                rampUpTurn(0, 0, 0.5, 0.5, 5);
+                trip13 = tripLoop();
+                telemetry.addData("trip", "13");
+            }
             else if (trip13 && !trip14) {
-                rampUp(-3.3 * one, 49.8, 0.5, 0.3, 5);
-                sleep(300);
-                intake.setPower(1);
+                rampUp(-2.5 * one, 0, 0.5, 0.5, 5);
                 trip14 = tripLoop();
                 telemetry.addData("trip", "14");
             }
+            //turn towards wobble
             else if (trip14 && !trip15) {
-                rampUp(0 * one, 47.8, 0.5, 0.3, 5);
+                rampUpTurn(0 * one, -125, 0.5, 0.5, 5);
                 trip15 = tripLoop();
                 telemetry.addData("trip", "15");
             }
-
+            // move towards wobble
             else if (trip15 && !trip16) {
-                rampUp(2 * one, 47.8, 0.5, 0.5, 5);
+                rampUp(1.3 * one, -125, 0.5, 0.5, 5);
                 trip16 = tripLoop();
                 telemetry.addData("trip", "16");
             }
+            //pick and turn towards target zone c
             else if (trip16 && !trip17) {
-                rampUpTurn(0 * one, -2, 0.5, 0.3, 5);
-                trip17= tripLoop();
+                rampUpTurn(-1 * one, 0, 0.5, 0.7, 5);
+                trip17 = tripLoop();
                 telemetry.addData("trip", "17");
+                WobbleArmL.setPosition(0.35);
+                WobbleArmR.setPosition(0.1);
             }
-//
+            // deliver
+            else if (trip17 && !trip18) {
+                rampUp(7.5 * one, -5, 0.5, 0.8, 5);
+                trip18 = tripLoop();
+                telemetry.addData("trip", "18");
+                WobbleArmL.setPosition(0);
+                WobbleArmR.setPosition(0.5);
+            }
+            //park
+            else if (trip18 && !trip19) {
+                rampUp(-1.3 * one, -5, 0.5, 0.8, 5);
+                trip19 = tripLoop();
+                telemetry.addData("trip", "19");
+            }
+            //----------------------------------INTAKING AND SHOOTING AND DELIVERING AND PARKING----------------------------------------------------------------------------------
+//            //turn robot so that intake is facing ring stack
+//            else if (trip12 && !trip13) {
+//                    rampUpTurn(0 * one, 45, 0.5, 0.3, 5);
+//                    trip13 = tripLoop();
+//                    telemetry.addData("trip", "13");
+//            }
+//            //move backwards toward rings
+//            else if (trip13 && !trip14) {
+//                rampUp(-2.4 * one, 45, 0.5, 0.7, 5);
+//                trip14 = tripLoop();
+//                telemetry.addData("trip", "14");
+//        }
+//            //collect rings
+//            else if (trip14 && !trip15) {
+//                rampUp(-0.5 * one, 45, 0.5, 0.05, 5);
+//                intake.setPower(1);
+//                trip15 = tripLoop();
+//                telemetry.addData("trip", "15");
+//            }
+//            //move forward towards goal
+//            else if (trip15 && !trip16) {
+//                rampUpTurn(0 * one, 45, 0.5, 0, 5);
+//                trip16 = tripLoop();
+//                telemetry.addData("trip", "16");
+//            }
+//            //
 //            else if (trip16 && !trip17) {
+//                rampUp(2  * one, 45, 0.5, 0.3, 5);
+//                trip17 = tripLoop();
+//                telemetry.addData("trip", "17");
+//            }
+//            else if (trip17 && !trip18) {
+//                rampUpTurn(0 * one, 5, 0.5, 0.3, 5);
+//                trip18 = tripLoop();
+//                telemetry.addData("trip", "18");
+//            }
+////
+//            else if (trip18 && !trip19) {
 //                boolean x = false;
-//                for (int i = 0; i < 6; i++) {
+//                for (int i = 0; i < 5; i++) {
 //                    telemetry.addData("Counter is", "push " + i);
 //                    telemetry.update();
 //                    Pusher.setPosition(0.4);
@@ -726,8 +802,9 @@ boolean trip1 = false;
 //                    x = true;
 //                }
 //                if (x == true) {
-//                    trip17 = true;
-//                    telemetry.addData("trip", "17");
+//                    trip19 = true;
+//                    intake.setPower(0);
+//                    telemetry.addData("trip", "19");
 //                }
 //            }
         }

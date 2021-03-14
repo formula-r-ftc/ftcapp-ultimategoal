@@ -27,7 +27,6 @@ public class FormulaRTeleOp extends OpMode {
     private DcMotor Shooter;
     private Servo Pusher;
     private DcMotor slides;
-    private DcMotor slides2;
     private DcMotor intake;
     private Servo WobbleArmR;
     private Servo WobbleArmL;
@@ -123,9 +122,9 @@ public class FormulaRTeleOp extends OpMode {
     //Shooter method
     public void shoot() {
 
-        if((gamepad2.right_trigger) > 0.3 && t1.seconds() > 0.3 && Shooter.getPower() == 0){
+        if((gamepad1.right_trigger) > 0.3 && t1.seconds() > 0.3 && Shooter.getPower() == 0){
             Shooter.setPower(1);
-        }else if ((gamepad2.right_trigger) > 0.3 && t1.seconds() > 0.3){
+        }else if ((gamepad1.right_trigger) > 0.3 && t1.seconds() > 0.3){
             Shooter.setPower(0);
         }
 
@@ -144,58 +143,62 @@ public class FormulaRTeleOp extends OpMode {
         telemetry.addData("WobbleArmRPosition", WobbleArmR);
     }
 
-    //intake method
-    public void Intake(){
-        if((gamepad2.right_stick_button)){
-            intake.setPower(-1);
-        }else if (gamepad2.a) {
-            intake.setPower(0);
-        }
-        if ((gamepad2.left_trigger) > 0.5 && t1.seconds() > 0.5){
-            intake.setPower(1);
-        }
-    }
-
-    public void linearSlides(){
-        slides.setPower(gamepad2.left_stick_y);
-    }
-
-    //Linear Slide Methods
-    double initPositionA = 1900;
-    double initPositionB = 1408;
+// linear slides stuff------------------------------------------------------------------------------
     double linearSlideInitPos = 0;
 
     private double linearSlideEncSpeed(double targetPosition, double maxSpeed){
-        double difference = targetPosition + linearSlideInitPos - (slides.getCurrentPosition()+ slides2.getCurrentPosition())/2;
-        telemetry.addData("LS Difference", difference);
-        double power = Range.clip(-difference / 200, -maxSpeed, maxSpeed);
+        double distance = targetPosition + linearSlideInitPos - slides.getCurrentPosition();
+        telemetry.addData("LS distance", distance);
+        double power = Range.clip(-distance / 500, -maxSpeed, maxSpeed);
         return power;
     }
 
-    double targetPositionA;
-    double targetPositionB;
-
-    public void slideButtons(){
-        if(ifPressed(gamepad2.b)){
-            targetPositionA = -1500 + initPositionA;
-            targetPositionB = 1500 + initPositionB;
-
-        } else if (ifPressed(gamepad2.x) ){
-            targetPositionA = 1500 + initPositionA;
-            targetPositionB = -1500 + initPositionB;
-
-        }else if (ifPressed(gamepad2.a) && targetPositionA != initPositionA){
-            targetPositionA = initPositionA;
-            targetPositionB = initPositionB;
+    public void slidePos(double position, double time, double maxSpeed){
+        double Acceleration = maxSpeed/time;
+        double power = t1.seconds() * Acceleration;
+        if (Math.abs(power) < linearSlideEncSpeed(position, maxSpeed)){
+            slides.setPower(linearSlideEncSpeed(position, maxSpeed));
+        } else {
+            slides.setPower(linearSlideEncSpeed(position, maxSpeed));
         }
-        booleanIncrementer = 0;
-        slides.setPower(linearSlideEncSpeed(targetPositionA, 0.75));
-       // slides2.setPower(linearSlideEncSpeed(-targetPositionB,0.75));
-
-
-        telemetry.addData("slidesposition ", slides.getCurrentPosition());
     }
 
+    public void moveSlides(){
+        boolean g2a = gamepad2.a;
+        boolean g2b = gamepad2.b;
+        boolean toggleReady1 = true;
+        boolean toggleReady2 = true;
+
+
+        if(g2a == false){
+            toggleReady1 = true;
+        }
+        if (g2b == false) {
+            toggleReady2 = true;
+        }
+
+        if (gamepad2.a && toggleReady1) {
+            toggleReady1 = false;
+            if (gamepad2.a && !(slides.getCurrentPosition()==1300)) {
+                slidePos(1300, 0.5, 0.75);
+            }
+        }
+        if (gamepad2.b){
+            slidePos(100, 0.5, 0.75);
+        }
+    }
+
+    //intake method
+    public void Intake(){
+        if((gamepad1.right_stick_button)){
+            intake.setPower(-1);
+        }else if (gamepad1.a) {
+            intake.setPower(0);
+        }
+        if ((gamepad1.left_trigger) > 0.5 && t1.seconds() > 0.5){
+            intake.setPower(1);
+        }
+    }
 
 
     // toggle switch methods
@@ -259,30 +262,29 @@ public class FormulaRTeleOp extends OpMode {
         Shooter = hardwareMap.get(DcMotor.class, "Shooter");
         Pusher = hardwareMap.get(Servo.class, "Pusher");
         slides = hardwareMap.get(DcMotor.class, "slides");
-        slides2 = hardwareMap.get(DcMotor.class, "slides2");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         intake = hardwareMap.get(DcMotor.class, "intake");
         WobbleArmL = hardwareMap.get(Servo.class, "WobbleArmL");
         WobbleArmR = hardwareMap.get(Servo.class, "WobbleArmR");
 
+        slides = hardwareMap.get(DcMotor.class, "slides");
+
+        linearSlideInitPos = slides.getCurrentPosition();
+//        slidePos(200, 0.5, 0.75);
+//
     }
 
     @Override
     public void init_loop() {
-        targetPositionA = initPositionA;
-        targetPositionB = initPositionB;
 
-        //slides.setPower(linearSlideEncSpeed(targetPositionA, 0.75));
+
 
         telemetry.addData("a: ", ifPressed(gamepad1.a));
-        telemetry.addData("initPos: ", initPositionA);
-        telemetry.addData("targetPositionA: ", targetPositionA);
-        telemetry.addData("targetPositionB: ", targetPositionB);
-        telemetry.addData("slides Positiion", slides.getCurrentPosition());
-        telemetry.addData("slides 2 Positiion", slides2.getCurrentPosition());
         telemetry.addData("WobbleArmLPosition", WobbleArmL.getPosition());
         telemetry.addData("WobbleArmRPosition", WobbleArmR.getPosition());
         telemetry.update();
+
+        telemetry.addData("slides Pos: ", slides.getCurrentPosition());
     }
 
     @Override
@@ -296,20 +298,16 @@ public class FormulaRTeleOp extends OpMode {
         moveDriveTrain();
         push();
         shoot();
-        //slideButtons();
         Intake();
         WobbleArm();
-        linearSlides();
         push1();
-
+        moveSlides();
         telemetry.addData("servoArmPosL", WobbleArmL.getPosition());
-       telemetry.addData("servoArmPosR", WobbleArmR.getPosition());
+        telemetry.addData("servoArmPosR", WobbleArmR.getPosition());
         telemetry.addData("intakePower", intake.getPower());
-        telemetry.addData("gampad1.a: ", ifPressed(gamepad1.a));
-        telemetry.addData("initPos: ", initPositionA);
-        telemetry.addData("targetPosition: ", targetPositionA);
-        telemetry.addData("slides  Positiion", slides.getCurrentPosition());
-        telemetry.addData("slides 2 Positiion", slides2.getCurrentPosition());
+        telemetry.addData("gamepad1.a: ", ifPressed(gamepad1.a));
+        telemetry.addData("slides  Position", slides.getCurrentPosition());
+        telemetry.addData("slides Pos: ", slides.getCurrentPosition());
         telemetry.addData("WobbleArmLPosition", WobbleArmL.getPosition());
         telemetry.addData("WobbleArmRPosition", WobbleArmR.getPosition());
         telemetry.update();
