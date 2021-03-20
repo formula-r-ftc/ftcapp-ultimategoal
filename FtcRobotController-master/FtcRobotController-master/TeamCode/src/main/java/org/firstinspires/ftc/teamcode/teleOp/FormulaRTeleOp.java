@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teleOp;
+ package org.firstinspires.ftc.teamcode.teleOp;
 
 import android.text.util.Rfc822Token;
 
@@ -27,6 +27,7 @@ public class FormulaRTeleOp extends OpMode {
     private DcMotor Shooter;
     private Servo Pusher;
     private DcMotor slides;
+    private DcMotor slides2;
     private DcMotor intake;
     private Servo WobbleArmR;
     private Servo WobbleArmL;
@@ -40,10 +41,10 @@ public class FormulaRTeleOp extends OpMode {
 
     int booleanIncrementer = 0;
 
+    int buttonInc = 0;
+
     ArrayList<Boolean> booleanArray = new ArrayList<Boolean>();
 
-
-    //First driver controls start
     //DriveTrain method
     public void moveDriveTrain(){
         if(gamepad1.left_bumper){
@@ -60,12 +61,13 @@ public class FormulaRTeleOp extends OpMode {
             LBMotor.setPower(gamepad1.right_stick_y);
             RFMotor.setPower(-gamepad1.left_stick_y);
             RBMotor.setPower(-gamepad1.left_stick_y);
+
             telemetry.addData("joystick", gamepad1.right_stick_y);
             telemetry.addData("joystick", gamepad1.left_stick_y);
         }
     }
 
-//    pusher method;
+    //Push 3 times method
     public void push(){
         boolean g1rb = gamepad1.right_bumper;
         boolean toggleReady = true;
@@ -87,14 +89,18 @@ public class FormulaRTeleOp extends OpMode {
                     sleep(330);
 
                 }
+//                targetPosition = initPosition;
+//                targetPosition2 = initPosition2;
             }
         }
     }
 
+    //Push 1 time method
     public void push1(){
         boolean g1rb = gamepad1.a;
         boolean toggleReady = true;
         double servoArmPos = Pusher.getPosition();
+
 
         if(g1rb == false){
             toggleReady = true;
@@ -105,30 +111,47 @@ public class FormulaRTeleOp extends OpMode {
                 for (int i = 0; i<1; i++){
                     moveDriveTrain();
                     telemetry.addData("Counter is", "push " + i);
-                    telemetry.update();
                     Pusher.setPosition(0.3);
                     sleep(300);
                     Pusher.setPosition(0.0);
                     sleep(330);
-
+                    buttonInc++;
+                    telemetry.addData("button pressed:", buttonInc);
+                    telemetry.update();
                 }
             }
+
+//                if (buttonInc == 3) {
+//                    targetPosition = initPosition;
+//                    targetPosition2 = initPosition2;
+//                    buttonInc = 0;
+//                }
         }
     }
 
-    //First Driver controls done
-
-    //Second Driver controls start
     //Shooter method
     public void shoot() {
 
         if((gamepad1.right_trigger) > 0.3 && t1.seconds() > 0.3 && Shooter.getPower() == 0){
             Shooter.setPower(1);
-        }else if ((gamepad1.right_trigger) > 0.3 && t1.seconds() > 0.3){
+        }else if ((gamepad1.y)){
             Shooter.setPower(0);
         }
 
     }
+
+    //Intake method
+    public void Intake(){
+        if ((gamepad1.left_trigger) > 0.5 && t1.seconds() > 0.5) {
+            intake.setPower(1);
+        } else if((gamepad1.right_stick_button)) {
+            intake.setPower(-1);
+        } else if (gamepad1.b) {
+            intake.setPower(0);
+        }
+
+    }
+
 
     //Wobble arm method
     public void WobbleArm() {
@@ -143,13 +166,20 @@ public class FormulaRTeleOp extends OpMode {
         telemetry.addData("WobbleArmRPosition", WobbleArmR);
     }
 
-// linear slides stuff------------------------------------------------------------------------------
+    //Linear Slide methods ------------------------------------------------------------------------
+
     double linearSlideInitPos = 0;
 
     private double linearSlideEncSpeed(double targetPosition, double maxSpeed){
         double distance = targetPosition + linearSlideInitPos - slides.getCurrentPosition();
         telemetry.addData("LS distance", distance);
         double power = Range.clip(-distance / 500, -maxSpeed, maxSpeed);
+        return power;
+    }
+    private double linearSlide2EncSpeed(double targetPosition, double maxSpeed){
+        double distance = targetPosition + linearSlideInitPos - slides2.getCurrentPosition();
+        telemetry.addData("LS 2 distance", distance);
+        double power = Range.clip(distance / 500, -maxSpeed, maxSpeed);
         return power;
     }
 
@@ -163,43 +193,30 @@ public class FormulaRTeleOp extends OpMode {
         }
     }
 
-    public void moveSlides(){
-        boolean g2a = gamepad2.a;
-        boolean g2b = gamepad2.b;
-        boolean toggleReady1 = true;
-        boolean toggleReady2 = true;
+
+    double targetPosition = 0;
+    double targetPosition2 = 0;
+    public void slideButtons(){
+        double initPosition = 0;
+        double initPosition2 = 0;
+
+        if(ifPressed(gamepad2.a)) {
+            targetPosition = 700 + initPosition;
+            targetPosition2 = 700 + initPosition2;
+
+        } else if (ifPressed(gamepad2.b) ) {
+            targetPosition = initPosition;
+            targetPosition2 = initPosition2;
+        }
+        else if (ifPressed(gamepad2.x)){
+            targetPosition = 2200;
+        }
 
 
-        if(g2a == false){
-            toggleReady1 = true;
-        }
-        if (g2b == false) {
-            toggleReady2 = true;
-        }
-
-        if (gamepad2.a && toggleReady1) {
-            toggleReady1 = false;
-            if (gamepad2.a && !(slides.getCurrentPosition()==1300)) {
-                slidePos(1300, 0.5, 0.75);
-            }
-        }
-        if (gamepad2.b){
-            slidePos(100, 0.5, 0.75);
-        }
+        slides.setPower(linearSlideEncSpeed(targetPosition, 1));
+//        slides2.setPower(linearSlide2EncSpeed(targetPosition2, 1));
+        booleanIncrementer = 0;
     }
-
-    //intake method
-    public void Intake(){
-        if((gamepad1.right_stick_button)){
-            intake.setPower(-1);
-        }else if (gamepad1.a) {
-            intake.setPower(0);
-        }
-        if ((gamepad1.left_trigger) > 0.5 && t1.seconds() > 0.5){
-            intake.setPower(1);
-        }
-    }
-
 
     // toggle switch methods
     private boolean ifPressed(boolean button){
@@ -252,7 +269,6 @@ public class FormulaRTeleOp extends OpMode {
     }
 
 
-
     @Override
     public void init() {
         RFMotor = hardwareMap.get(DcMotor.class, "RFMotor");
@@ -262,22 +278,19 @@ public class FormulaRTeleOp extends OpMode {
         Shooter = hardwareMap.get(DcMotor.class, "Shooter");
         Pusher = hardwareMap.get(Servo.class, "Pusher");
         slides = hardwareMap.get(DcMotor.class, "slides");
+        slides2 = hardwareMap.get(DcMotor.class, "slides2");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         intake = hardwareMap.get(DcMotor.class, "intake");
         WobbleArmL = hardwareMap.get(Servo.class, "WobbleArmL");
         WobbleArmR = hardwareMap.get(Servo.class, "WobbleArmR");
 
-        slides = hardwareMap.get(DcMotor.class, "slides");
 
         linearSlideInitPos = slides.getCurrentPosition();
-//        slidePos(200, 0.5, 0.75);
-//
+
     }
 
     @Override
     public void init_loop() {
-
-
 
         telemetry.addData("a: ", ifPressed(gamepad1.a));
         telemetry.addData("WobbleArmLPosition", WobbleArmL.getPosition());
@@ -285,6 +298,12 @@ public class FormulaRTeleOp extends OpMode {
         telemetry.update();
 
         telemetry.addData("slides Pos: ", slides.getCurrentPosition());
+        telemetry.addData("slides2 Pos: ", slides2.getCurrentPosition());
+
+//        slides2.setPower(linearSlide2EncSpeed(initPosition2, 0.75));
+
+
+
     }
 
     @Override
@@ -301,7 +320,8 @@ public class FormulaRTeleOp extends OpMode {
         Intake();
         WobbleArm();
         push1();
-        moveSlides();
+        slideButtons();
+
         telemetry.addData("servoArmPosL", WobbleArmL.getPosition());
         telemetry.addData("servoArmPosR", WobbleArmR.getPosition());
         telemetry.addData("intakePower", intake.getPower());
@@ -310,9 +330,10 @@ public class FormulaRTeleOp extends OpMode {
         telemetry.addData("slides Pos: ", slides.getCurrentPosition());
         telemetry.addData("WobbleArmLPosition", WobbleArmL.getPosition());
         telemetry.addData("WobbleArmRPosition", WobbleArmR.getPosition());
+        telemetry.addData("slides2 Pos: ", slides2.getCurrentPosition());
+        telemetry.addData("buttonInc", buttonInc);
         telemetry.update();
 
    }
-
 
 }
