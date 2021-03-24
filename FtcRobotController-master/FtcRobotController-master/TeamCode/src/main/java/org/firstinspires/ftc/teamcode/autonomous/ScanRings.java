@@ -1039,5 +1039,17 @@ public class ScanRings<tfod> extends OpMode {
 
     private boolean tripLoop() {
     }
+<<<<<<< Updated upstream
 
 }
+=======
+    public final void sleep(long milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+}
+//hi guys
+>>>>>>> Stashed changes
