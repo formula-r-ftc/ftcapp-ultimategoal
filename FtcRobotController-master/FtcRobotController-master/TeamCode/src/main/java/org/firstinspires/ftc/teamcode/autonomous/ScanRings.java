@@ -1,5 +1,4 @@
-   package org.firstinspires.ftc.teamcode.autonomous;//package org.firstinspires.ftc.teamcode.autonomous;
-//package org.firstinspires.ftc.teamcode.autonomous;
+package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -633,7 +632,7 @@ public class ScanRings<tfod> extends OpMode {
                 trip5 = tripLoop();
                 telemetry.addData("trip", "5");
             }
-            //turn towards High Goal!!!!!!!!!!
+            //turn towards shooting position
             else if (trip5 && !trip6) {
                 rampUpTurn(0 * one, -30, 0.5, 0.3, 5);
                 trip6 = tripLoop();
@@ -641,31 +640,25 @@ public class ScanRings<tfod> extends OpMode {
             }
             //move backward
             else if (trip6 && !trip7) {
-                rampUp(-2.95 * one, -30, 0.5, 0.7, 5);
+                rampUp(-4.5 * one, -30, 0.5, 0.7, 5);
                 trip7 = tripLoop();
                 telemetry.addData("trip", "7");
             }
-            //straighten towards high goals
+            //straighten towards powershot1!!!
             else if (trip7 && !trip8) {
-//                slides.setPower(linearSlideEncSpeed(800, 1));
+                slides.setPower(linearSlideEncSpeed(800, 1));
                 Shooter.setPower(1);
                 rampUpTurn(0 * one, 0, 0.5, 0.3, 5);
                 trip8 = tripLoop();
                 telemetry.addData("trip", "8");
             }
-            //knock over rings
+//            // shoot power shot 1
             else if (trip8 && !trip9) {
-                intake.setPower(-0.2);
-                rampUp(-2.05 * one, 0, 0.5, 0.5, 5);
-                trip9 = tripLoop();
-                telemetry.addData("trip", "9");
-            }
-            // turn towards powershot 2!!!!!!
-            else if (trip9 && !trip10) {
+                slides.setPower(linearSlideEncSpeed(800, 1));
                 boolean x = false;
-                for (int i = 0; i < 3; i++) {
+                for (int i = 0; i < 1; i++) {
                     telemetry.addData("Counter is", "push " + i);
-                    telemetry.addData("trip", "10");
+                    telemetry.addData("trip", "9");
                     Pusher.setPosition(0.4);
                     sleep(500);
                     Pusher.setPosition(0.0);
@@ -673,25 +666,52 @@ public class ScanRings<tfod> extends OpMode {
                     x = true;
                 }
                 if (x == true) {
-                    rampUp(0.25 * one, 0, 0.5, 0.9, 0);
-                    trip10 = true;
-                    telemetry.addData("trip", "10");
+                    //rampUp(0 * one, 12, 0.5, 0.3, 5);
+                    trip9 = true;
+                    telemetry.addData("trip", "9");
                 }
 //                slides.setPower(linearSlideEncSpeed(0, 1));
             }
-            //intake
-            else if (trip10 && !trip11) {
-                //  slides.setPower(linearSlideEncSpeed(0, 1));
-                intake.setPower(1);
-                rampUp(-2 * one, 0, 0.5, 0.25, 5);
-                trip11 = tripLoop();
-                telemetry.addData("trip", "11");
+            //turn towards powershot 2
+            else if (trip9 && !trip10) {
+                slides.setPower(linearSlideEncSpeed(800, 1));
+                //Shooter.setPower(1);
+                rampUpTurn(0 * one, 8, 0.5, 0.6, 5);
+                trip10 = tripLoop();
+                telemetry.addData("trip", "10");
             }
-            //  shoot!!!!!!!
-            else if (trip11 && !trip12) {
-//                  slides.setPower(linearSlideEncSpeed(450, 1));
+            //  shoot powershot 2!!!!!!!
+            else if (trip10 && !trip11) {
+                  slides.setPower(linearSlideEncSpeed(800, 1));
                 boolean x = false;
-                for (int i = 0; i < 4; i++) {
+                for (int i = 0; i < 1; i++) {
+                    telemetry.addData("Counter is", "push " + i);
+                    telemetry.update();
+                    Pusher.setPosition(0.4);
+                    sleep(400);
+                    Pusher.setPosition(0.0);
+                    sleep(430);
+                    x = true;
+                }
+                if (x == true) {
+                 // rampUp(0 * one, 20, 0.5, 0.3, 5);
+                    trip11 = true;
+                    telemetry.addData("trip", "11");
+                }
+            }
+            //turn towards power shot 3
+            else if (trip11 && !trip12) {
+                slides.setPower(linearSlideEncSpeed(800, 1));
+                Shooter.setPower(1);
+                rampUpTurn(0 * one, 16, 0.5, 0.6, 5);
+                trip12 = tripLoop();
+                telemetry.addData("trip", "12");
+            }
+            //  shoot powershot 3!!!!!!!
+            else if (trip12 && !trip13) {
+                slides.setPower(linearSlideEncSpeed(800, 1));
+                boolean x = false;
+                for (int i = 0; i < 1; i++) {
                     telemetry.addData("Counter is", "push " + i);
                     telemetry.update();
                     Pusher.setPosition(0.4);
@@ -702,16 +722,28 @@ public class ScanRings<tfod> extends OpMode {
                 }
                 if (x == true) {
                     //rampUp(0.25*one,0,0.5,0.9, 0);
-                    trip12 = true;
-                    telemetry.addData("trip", "12");
+                    trip13 = true;
+                    telemetry.addData("trip", "13");
                 }
             }
-            //turn towards wobble
-            else if (trip12 && !trip13) {
-                rampUpTurn(0, -150, 0.5, 0.5, 5);
-                trip13 = tripLoop();
-                telemetry.addData("trip", "13");
-            }
+//            //turn towards wobble
+//            else if (trip13 && !trip14) {
+//                slides.setPower(linearSlideEncSpeed(0, 1));
+//                Shooter.setPower(0);
+//                rampUpTurn(0, -150, 0.5, 0.5, 5);
+//                trip14 = tripLoop();
+//                telemetry.addData("trip", "14");
+//            }
+//            // move towards wobble and clamp on it
+//            else if (trip14 && !trip15){
+//                rampUp(0.6*one, -150, 0.5, 0.4, 5);
+//                trip15 = tripLoop();
+//                telemetry.addData("trip", "15");
+//                WobbleArmL.setPosition(0.35);
+//                WobbleArmR.setPosition(0.1);
+//            }
+
+
         }
     }
 
