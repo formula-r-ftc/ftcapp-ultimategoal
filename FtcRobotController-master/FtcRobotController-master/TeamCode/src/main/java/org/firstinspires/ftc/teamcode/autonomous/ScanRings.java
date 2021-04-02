@@ -747,26 +747,44 @@ public class ScanRings<tfod> extends OpMode {
             }
             //line up with second wobble goal
             else if (trip16 && !trip17) {
-                rampUpTurn(0 * one, -125, 0.5, 0.5, 5);
+                rampUpTurn(0 * one, -135, 0.5, 0.5, 5);
                 trip17 = tripLoop();
                 telemetry.addData("trip", "17");
             }
             //move forward toward second wobble goal
             else if (trip17 && !trip18) {
-                rampUp(2 * one, -125, 0.5, 0.4, 5);
+                rampUp(1 * one, -135, 0.5, 0.4, 5);
                 trip18 = tripLoop();
                 telemetry.addData("trip", "18");
             }
             //turn towards targetzoneC
             else if (trip18 && !trip19) {
-                rampUpTurn(-0.4 * one, 0, 0.5, 0.5, 0.5);
+                rampUpTurn(-0.5 * one, 0, 0.5, 0.5, 0.5);
                 WobbleArmL.setPosition(0.35);
                 WobbleArmR.setPosition(0.1);
                 trip19 = tripLoop();
                 telemetry.addData("trip", "19");
             }
-
-
+            //move up while holding wobble goal
+            else if (trip19 && !trip20) {
+                rampUpTurn(6 * one, 0, 0.5, 0.3, 0.5);
+                trip20 = tripLoop();
+                telemetry.addData("trip", "20");
+            }
+            //take wobble goal to target zone C
+            else if (trip20 && !trip21) {
+                rampUp(7.5 * one, 0, 0.5, 0.7, 5);
+                WobbleArmL.setPosition(0);
+                WobbleArmR.setPosition(0.5);
+                trip21 = tripLoop();
+                telemetry.addData("trip", "21");
+            }
+            //park
+            else if (trip21 && !trip22) {
+                rampUp(-2.1 * one, 0, 0.5, 0.7, 5);
+                trip22 = tripLoop();
+                telemetry.addData("trip", "22");
+            }
         }
     }
 
