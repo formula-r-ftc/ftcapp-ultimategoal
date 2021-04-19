@@ -117,7 +117,6 @@ public class ScanRings<tfod> extends OpMode {
 
 
     public void rampUpTurn(double distance, double heading, double time, double maxSpeed, double busyTime) {
-        double AvgEncPos = (RFMotor.getCurrentPosition() + LFMotor.getCurrentPosition() + RBMotor.getCurrentPosition() + LBMotor.getCurrentPosition()) / 4;
         double AccelerationSlope = maxSpeed / time;
         double power = t1.seconds() * AccelerationSlope;
         if (Math.abs(power) < Math.abs(encoderSpeed(distance, maxSpeed))) { // if acceleration is less than speed

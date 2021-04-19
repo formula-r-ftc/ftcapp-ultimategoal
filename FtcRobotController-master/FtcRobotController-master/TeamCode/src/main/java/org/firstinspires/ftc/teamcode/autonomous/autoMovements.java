@@ -148,7 +148,6 @@ public class autoMovements extends OpMode {
                   RBMotor.setPower(0);
                   LBMotor.setPower(0);
                   setTurnPower(0, 0);
-
               }
           }
       }

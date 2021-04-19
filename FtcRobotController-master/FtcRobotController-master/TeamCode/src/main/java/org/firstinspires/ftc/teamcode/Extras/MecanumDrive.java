@@ -28,6 +28,10 @@ public class MecanumDrive extends OpMode {
         LBMotor.setPower(pivot + (-vertical + horizontal));
     }
 
+    public void shoot(){
+
+    }
+
     @Override
     public void init() {
         RFMotor = hardwareMap.get(DcMotor.class, "RFMotor");
