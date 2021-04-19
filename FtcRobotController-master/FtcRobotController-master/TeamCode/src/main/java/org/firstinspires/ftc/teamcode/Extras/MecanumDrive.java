@@ -8,24 +8,24 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 @TeleOp
 public class MecanumDrive extends OpMode {
 
-    DcMotor RFMotor;
-    DcMotor LFMotor;
-    DcMotor RBMotor;
-    DcMotor LBMotor;
+    private DcMotor RFMotor;
+    private DcMotor LFMotor;
+    private DcMotor RBMotor;
+    private DcMotor LBMotor;
 
     public void moveDriveTrain(){
         double vertical = 0;
         double horizontal = 0;
         double pivot = 0;
 
-        vertical = -gamepad1.left_stick_y;
-        horizontal = gamepad1.left_stick_x;
+        vertical = gamepad1.left_stick_y;
+        horizontal = -gamepad1.left_stick_x;
         pivot = gamepad1.right_stick_x;
 
-        RFMotor.setPower(pivot + (-vertical + horizontal));
-        RBMotor.setPower(pivot + (-vertical - horizontal));
+        RFMotor.setPower(-pivot + (-vertical + horizontal));
+        RBMotor.setPower(-pivot + (-vertical - horizontal));
         LFMotor.setPower(pivot + (-vertical - horizontal));
-        RFMotor.setPower(pivot + (-vertical + horizontal));
+        LBMotor.setPower(pivot + (-vertical + horizontal));
     }
 
     @Override

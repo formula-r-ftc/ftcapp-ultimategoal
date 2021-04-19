@@ -1,3 +1,5 @@
+package org.firstinspires.ftc.teamcode.Extras;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -6,7 +8,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import java.util.List;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -14,13 +15,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.teamcode.autonomous.autoMovements;
+import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+
+import java.util.List;
 
 @Autonomous
-public class targetZoneC<tfod> extends OpMode {
-
+public class controlVideo extends OpMode {
     private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Quad";
     private static final String LABEL_SECOND_ELEMENT = "Single";
@@ -38,16 +39,13 @@ public class targetZoneC<tfod> extends OpMode {
     private DcMotor LFMotor;
     private DcMotor RBMotor;
     private DcMotor LBMotor;
-    private DcMotor Shooter;
-    private Servo Pusher;
-    private DcMotor slides;
-    private DcMotor slides2;
-    //    private DcMotor intake;
-    private Servo WobbleArmR;
-    private Servo WobbleArmL;
-    private Servo RStack;
-    private Servo LStack;
-    private DcMotor intake;
+//    private DcMotor Shooter;
+//    private Servo Pusher;
+//    private DcMotor slides;
+//    private DcMotor slides2;
+//    private DcMotor intake;
+//    private Servo WobbleArmR;
+//    private Servo WobbleArmL;
 
     double RFPreviousValue = 0;
     double RBPreviousValue = 0;
@@ -115,6 +113,18 @@ public class targetZoneC<tfod> extends OpMode {
         }
     }
 
+    public void rampUpLit(double distance, double heading, double time, double maxSpeed){
+        double AvgEncPos = (RFMotor.getCurrentPosition() - RFPreviousValue + LFMotor.getCurrentPosition() - LFPreviousValue + RBMotor.getCurrentPosition() - RBPreviousValue + LBMotor.getCurrentPosition() - LBPreviousValue) / 4;
+        double AccelerationSlope = maxSpeed / time;
+        double power = t1.seconds() * AccelerationSlope;
+        if (Math.abs(power) < Math.abs(encoderSpeed(distance, maxSpeed))) { // if acceleration is less than speed
+            setTurnPower(turn(heading), power);  //then set motor power to turn towards heading and accelerate until max speed
+        } else {
+                telemetry.addData("motor is: ", "busy");
+                setTurnPower(turn(heading), encoderSpeed(distance, maxSpeed));// otherwise keep motor power to heading and stop at the target Encoder Position
+        }
+    }
+
 
     public void rampUpTurn(double distance, double heading, double time, double maxSpeed, double busyTime) {
         double AvgEncPos = (RFMotor.getCurrentPosition() + LFMotor.getCurrentPosition() + RBMotor.getCurrentPosition() + LBMotor.getCurrentPosition()) / 4;
@@ -141,7 +151,7 @@ public class targetZoneC<tfod> extends OpMode {
 
     //Start of tensorflow program -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     boolean Single = false;
-    boolean Quad = true;
+    boolean Quad = false;
     boolean None = false;
 
     public void scan() {
@@ -191,12 +201,7 @@ public class targetZoneC<tfod> extends OpMode {
 
     double linearSlideInitPos = 0;
 
-    private double linearSlideEncSpeed(double targetPosition, double maxSpeed) {
-        double distance = targetPosition + linearSlideInitPos - slides.getCurrentPosition();
-        telemetry.addData("LS distance", distance);
-        double power = Range.clip(-distance / 500, -maxSpeed, maxSpeed);
-        return power;
-    }
+
 
     public void initVuforia() {
 
@@ -276,181 +281,6 @@ public class targetZoneC<tfod> extends OpMode {
     boolean trip27 = false;
     boolean trip28 = false;
 
-
-    public void moveTargetZoneC() {
-        if (Quad == true) {
-            // move in between the wobble and rings
-            if (!trip1) {
-                rampUp(1.55 * one, 0, 0.5, 0.5, 5);
-                trip1 = tripLoop();
-                telemetry.addData("trip", "1");
-            }
-            // turn towards the wall
-            else if (trip1 && !trip2) {
-                rampUpTurn(0, -60, 0.5, 0.4, 5);
-                trip2 = tripLoop();
-                telemetry.addData("trip", "2");
-            }
-            // move forward in front of target zone c
-            else if (trip2 && !trip3) {
-                rampUp(one, -60, 0.5, 0.7, 5);
-                trip3 = tripLoop();
-                telemetry.addData("trip", "3");
-            }
-            // turn towards target zone C
-            else if (trip3 && !trip4) {
-                rampUpTurn(0 * one, 0, 0.5, 0.4, 5);
-                trip4 = tripLoop();
-                telemetry.addData("trip", "4");
-            }
-//            //move and drop wobble
-            else if (trip4 && !trip5) {
-                rampUp(5.3 * one, 0, 0.5, 0.7, 5);
-                WobbleArmL.setPosition(0.45);
-                WobbleArmR.setPosition(0.04);
-                trip5 = tripLoop();
-                telemetry.addData("trip", "5");
-            }
-            //turn towards shooting position
-            else if (trip5 && !trip6) {
-                rampUpTurn(0 * one, -30, 0.5, 0.3, 5);
-                trip6 = tripLoop();
-                telemetry.addData("trip", "6");
-            }
-            //move backward
-            else if (trip6 && !trip7) {
-                rampUp(-3.5 * one, -30, 0.5, 0.7, 5);
-                Shooter.setPower(1);
-                trip7 = tripLoop();
-                telemetry.addData("trip", "7");
-            }
-            //Strighten towards Goal
-            else if (trip7 && !trip8) {
-                RStack.setPosition(0.5);
-                LStack.setPosition(0);
-                rampUpTurn(0, 0, 0, 0.5, 0);
-                trip8 = tripLoop();
-                telemetry.addData("trip", "8");
-            }
-            //Move Back
-            else if (trip8 && !trip9) {
-                rampUp(-1.97 * one, 0, 0, 0.5, 0);
-                trip9 = tripLoop();
-                telemetry.addData("trip", "9");
-            }
-            // shoots 3 rings
-            else if (trip9 && !trip10) {
-                boolean x = false;
-                for (int i = 0; i < 4; i++) {
-                    telemetry.addData("Counter is", "push " + i);
-                    telemetry.update();
-                    Pusher.setPosition(0.3);
-                    sleep(300);
-                    Pusher.setPosition(0.0);
-                    sleep(330);
-                    x = true;
-                }
-                if (x == true) {
-                    RStack.setPosition(0);
-                    LStack.setPosition(0.48);
-                    trip10 = tripLoop();
-                    telemetry.addData("trip", "10");
-                }
-            }
-//            move back to intake
-            else if (trip10 && !trip11) {
-                intake.setPower(1);
-                rampUp(-1.97 * one, 0, 0, 0.4, 0);
-                trip11 = tripLoop();
-                telemetry.addData("trip", "11");
-            }
-            //move up to shoot
-            else if (trip11 && !trip12) {
-                rampUp(.91 * one, 0, 0.5, 0.5, 0);
-                trip12 = tripLoop();
-                telemetry.addData("trip", "12");
-            }
-            // shoots 3 rings
-            else if (trip12 && !trip13) {
-                boolean x = false;
-                for (int i = 0; i < 5; i++) {
-                    telemetry.addData("Counter is", "push " + i);
-                    telemetry.update();
-                    Pusher.setPosition(0.3);
-                    sleep(300);
-                    Pusher.setPosition(0.0);
-                    sleep(330);
-                    x = true;
-                }
-                if (x == true) {
-                    trip13 = tripLoop();
-                    telemetry.addData("trip", "13");
-                }
-            }
-//            intake 1 ring
-            else if (trip13 && !trip14) {
-                RStack.setPosition(0);
-                LStack.setPosition(0.48);
-                rampUp(-2 * one, 0, 0.5, 0.4, 0);
-                trip14 = tripLoop();
-                telemetry.addData("trip", "14");
-            }
-            //move to shoot
-            else if (trip14 && !trip15) {
-                rampUp(2 * one, 0, 0.5, 0.5, 0);
-                trip15 = tripLoop();
-                telemetry.addData("trip", "15");
-            }
-            // shoots rings
-            else if (trip15 && !trip16) {
-                boolean x = false;
-                for (int i = 0; i < 5; i++) {
-                    telemetry.addData("Counter is", "push " + i);
-                    telemetry.update();
-                    Pusher.setPosition(0.3);
-                    sleep(300);
-                    Pusher.setPosition(0.0);
-                    sleep(330);
-                    x = true;
-                }
-                if (x == true) {
-                    trip16 = tripLoop();
-                    telemetry.addData("trip", "16");
-                }
-            }
-            else if (trip16 && !trip17) {
-                Shooter.setPower(0);
-                rampUpTurn(0 * one, -160, 0.5, 0.5, 0);
-                trip17 = tripLoop();
-                telemetry.addData("trip", "17");
-            }
-            else if (trip17 && !trip18) {
-                rampUp(0.94 * one, -160, 0.5, 0.5, 0);
-                trip18 = tripLoop();
-                telemetry.addData("trip", "18");
-            }
-            else if (trip18 && !trip19) {
-                WobbleArmL.setPosition(0.13);
-                WobbleArmR.setPosition(0.35);
-                intake.setPower(0);
-                rampUpTurn(-2 * one, 0, 0.5, 0.5, 0);
-                trip19 = tripLoop();
-                telemetry.addData("trip", "19");
-            }
-            else if (trip19 && !trip20) {
-                rampUp(6.5 * one, 0, 0.5, 1.0, 0);
-                trip20 = tripLoop();
-                telemetry.addData("trip", "20");
-            }
-            else if (trip20 && !trip21) {
-                rampUp(-0.8 * one, 0, 0.5, 1.0, 0);
-                trip21 = tripLoop();
-                telemetry.addData("trip", "21");
-            }
-        }
-    }
-
-
     public void initHardware () {
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
@@ -459,16 +289,13 @@ public class targetZoneC<tfod> extends OpMode {
         LFMotor = hardwareMap.get(DcMotor.class, "LFMotor");
         RBMotor = hardwareMap.get(DcMotor.class, "RBMotor");
         LBMotor = hardwareMap.get(DcMotor.class, "LBMotor");
-        WobbleArmL = hardwareMap.get(Servo.class, "WobbleArmL");
-        WobbleArmR = hardwareMap.get(Servo.class, "WobbleArmR");
+//        WobbleArmL = hardwareMap.get(Servo.class, "WobbleArmL");
+//        WobbleArmR = hardwareMap.get(Servo.class, "WobbleArmR");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
-        slides = hardwareMap.get(DcMotor.class, "slides");
-        Shooter = hardwareMap.get(DcMotor.class, "Shooter");
-        Pusher = hardwareMap.get(Servo.class, "Pusher");
-        RStack = hardwareMap.get(Servo.class, "RStack");
-        LStack = hardwareMap.get(Servo.class, "LStack");
-        intake = hardwareMap.get(DcMotor.class, "intake");
-
+//        slides = hardwareMap.get(DcMotor.class, "slides");
+//        Shooter = hardwareMap.get(DcMotor.class, "Shooter");
+//        Pusher = hardwareMap.get(Servo.class, "Pusher");
+//        intake = hardwareMap.get(DcMotor.class, "intake");
         RFMotor.setDirection(DcMotor.Direction.REVERSE);
         LFMotor.setDirection(DcMotor.Direction.FORWARD);
         RBMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -492,29 +319,11 @@ public class targetZoneC<tfod> extends OpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
     }
-    public void slideSpeed ( double targetPosition, double maxSpeed){
-        double EncoderPosition = slides.getCurrentPosition();
-        double distance = targetPosition - EncoderPosition;
-        //telemetry.addData("Encoder Speed distance",distance);
-        double speed = Range.clip(distance / 100, -maxSpeed, maxSpeed); // clip the speed
-        if (!(Math.abs(distance - EncoderPosition) < 80)) {
-            slides.setPower(speed);
-        }
-    }
+
 
     boolean closed = false;
     boolean drop = false;
-    public void holdwobble () {
-        WobbleArmL.setPosition(0.28);
-        WobbleArmR.setPosition(0.495);
-        if (WobbleArmR.getPosition() == 0.495 && WobbleArmL.getPosition() == 0.28) {
-            closed = true;
-        }
-        if (drop) {
-            WobbleArmL.setPosition(0.45);
-            WobbleArmR.setPosition(0.04);
-        }
-    }
+
 
     @Override
     public void init () {
@@ -530,8 +339,7 @@ public class targetZoneC<tfod> extends OpMode {
             tfod.activate();
             tfod.setZoom(2.5, 16.0 / 9.0);
         }
-        telemetry.addData("WobbleArmR ", WobbleArmR.getPosition());
-        telemetry.addData("WobbleArmL ", WobbleArmL.getPosition());
+
         telemetry.addData("LF Distance", LFMotor.getCurrentPosition());
         telemetry.addData("RF Distance", RFMotor.getCurrentPosition());
         telemetry.addData("LB Distance", LBMotor.getCurrentPosition());
@@ -545,8 +353,8 @@ public class targetZoneC<tfod> extends OpMode {
 
 
         //linear slides
-        double initPosition = slides.getCurrentPosition();
-        telemetry.addData("slide encoders;", initPosition);
+//        double initPosition = slides.getCurrentPosition();
+//        telemetry.addData("slide encoders;", initPosition);
     }
 
     @Override
@@ -564,18 +372,41 @@ public class targetZoneC<tfod> extends OpMode {
     boolean up = false;
     @Override
     public void loop () {
-        if (!closed) {
-            holdwobble();
-        } else {
-         //   scan();
-            moveTargetZoneC();
-        }
+
+        rampUpLit(0,90,0.5,0.3);
+
+//        rampUpLit(7*one, 0,0.5,0.3);
+
+//        if(!trip1){
+//            rampUp(2 *one, 0,0,0.5,0);
+//            trip1 = tripLoop();
+//        } else if(trip1 && !trip2){
+//            rampUpTurn(0 *one, 90,0,0.5,0);
+//            trip2 = tripLoop();
+//        } else if(trip2 && !trip3){
+//            rampUp(4 *one, 90,0,0.5,0);
+//            trip3 = tripLoop();
+        //}else if(trip3 && !trip4){
+//            rampUpTurn(2 *one, 178,0,0.5,0);
+//            trip4 = tripLoop();
+//        } else if(trip4 && !trip5){
+//            rampUp(4 *one, 178,0,0.5,0);
+//            trip5 = tripLoop();
+//        } else if(trip5 && !trip6){
+//            rampUpTurn(2 *one, 90,0,0.5,0);
+//            trip6 = tripLoop();
+//        } else if(trip6 && !trip7){
+//            rampUp(2 *one, 90,0,0.5,0);
+//            trip7 = tripLoop();
+//        } else if(trip6 && !trip7){
+//            rampUpTurn(2 *one, -0,0,0.5,0);
+//            trip8 = tripLoop();
+//        }
+
         telemetry.addData("none: ", None);
         telemetry.addData("quad: ", Quad);
         telemetry.addData("single: ", Single);
         telemetry.addData("heading: ", getHeading());
-        telemetry.addData("ShooterPower:", Shooter.getPower());
-        telemetry.addData("Slides Encoders: ", slides.getCurrentPosition());
         telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
         telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
         telemetry.addData("RFMotor encoder:", RFMotor.getCurrentPosition());
@@ -584,17 +415,6 @@ public class targetZoneC<tfod> extends OpMode {
     }
 
     //sleep methods
-    public final void idle () {
-        Thread.yield();
-    }
-    public final void sleep ( long milliseconds){
-        try {
-            Thread.sleep(milliseconds);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-    }
 
-}
-
+    }
 
