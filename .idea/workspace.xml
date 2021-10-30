@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="db69bf0f-6974-4427-8839-3aac44ae9ded" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/FtcRobotController-master/FtcRobotController-master/TeamCode/build.release.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/FtcRobotController-master/FtcRobotController-master/TeamCode/build.release.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FtcRobotController-master/FtcRobotController-master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/autonomous/ScanRings.java" beforeDir="false" afterPath="$PROJECT_DIR$/FtcRobotController-master/FtcRobotController-master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/autonomous/ScanRings.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FtcRobotController-master/FtcRobotController-master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleOp/FormulaRTeleOp.java" beforeDir="false" afterPath="$PROJECT_DIR$/FtcRobotController-master/FtcRobotController-master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleOp/FormulaRTeleOp.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FtcRobotController-master/FtcRobotController-master/build.common.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/FtcRobotController-master/FtcRobotController-master/build.common.gradle" afterDir="false" />
-    </list>
+    <list default="true" id="db69bf0f-6974-4427-8839-3aac44ae9ded" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -27,6 +25,7 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="reference.settings.ide.settings.file-colors" />
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -39,5 +38,17 @@
       <updated>1615684497136</updated>
     </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
 </project>
