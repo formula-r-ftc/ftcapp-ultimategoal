@@ -19,7 +19,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 
-@Autonomous
+//@Autonomous
 public class ScanRings<tfod> extends OpMode {
 
     private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";

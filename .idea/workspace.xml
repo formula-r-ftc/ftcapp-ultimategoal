@@ -4,7 +4,23 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
+<<<<<<< Updated upstream
     <list default="true" id="db69bf0f-6974-4427-8839-3aac44ae9ded" name="Default Changelist" comment="" />
+=======
+    <list default="true" id="db69bf0f-6974-4427-8839-3aac44ae9ded" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/FtcRobotController-master/FtcRobotController-master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/StateAuto/FullStatesAuto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FtcRobotController-master/FtcRobotController-master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleOp/MecanumDrive.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FtcRobotController-master/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/FtcRobotController-master/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FtcRobotController-master/FtcRobotController-master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Extras/MecanumDrive.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/FtcRobotController-master/FtcRobotController-master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Extras/TestNewRobot.java" beforeDir="false" afterPath="$PROJECT_DIR$/FtcRobotController-master/FtcRobotController-master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Extras/TestNewRobot.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FtcRobotController-master/FtcRobotController-master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/autonomous/ScanRings.java" beforeDir="false" afterPath="$PROJECT_DIR$/FtcRobotController-master/FtcRobotController-master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/autonomous/ScanRings.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FtcRobotController-master/FtcRobotController-master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/autonomous/autoMovements.java" beforeDir="false" afterPath="$PROJECT_DIR$/FtcRobotController-master/FtcRobotController-master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/StateAuto/autoMovements.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FtcRobotController-master/FtcRobotController-master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/autonomous/targetZoneA.java" beforeDir="false" afterPath="$PROJECT_DIR$/FtcRobotController-master/FtcRobotController-master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/autonomous/targetZoneA.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FtcRobotController-master/FtcRobotController-master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/autonomous/targetZoneC.java" beforeDir="false" afterPath="$PROJECT_DIR$/FtcRobotController-master/FtcRobotController-master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/autonomous/targetZoneC.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FtcRobotController-master/FtcRobotController-master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/autonomous/targetZoneb.java" beforeDir="false" afterPath="$PROJECT_DIR$/FtcRobotController-master/FtcRobotController-master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/autonomous/targetZoneb.java" afterDir="false" />
+    </list>
+>>>>>>> Stashed changes
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -22,7 +38,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="android.sdk.path" value="$USER_HOME$/AppData/Local/Android/Sdk" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/FtcRobotController-master" />
     <property name="settings.editor.selected.configurable" value="reference.settings.ide.settings.file-colors" />
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -39,6 +55,7 @@
     </task>
     <servers />
   </component>
+<<<<<<< Updated upstream
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
       <map>
@@ -50,5 +67,16 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
+=======
+  <component name="WindowStateProjectService">
+    <state x="254" y="84" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1618970762718">
+      <screen x="0" y="0" width="1600" height="860" />
+    </state>
+    <state x="254" y="84" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1600.860@0.0.1600.860" timestamp="1618970762718" />
+    <state x="580" y="184" key="FileChooserDialogImpl" timestamp="1619145057583">
+      <screen x="0" y="0" width="1600" height="860" />
+    </state>
+    <state x="580" y="184" key="FileChooserDialogImpl/0.0.1600.860@0.0.1600.860" timestamp="1619145057583" />
+>>>>>>> Stashed changes
   </component>
 </project>

@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.Extras;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -11,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+@Autonomous
 public class TestNewRobot extends OpMode {
 
     BNO055IMU imu;
@@ -28,6 +31,8 @@ public class TestNewRobot extends OpMode {
 
     double one = 537.6;
     ElapsedTime t1 = new ElapsedTime();
+    double avgEnc;
+    double avgEncSide;
 
     double getHeading() {
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -47,7 +52,8 @@ public class TestNewRobot extends OpMode {
         double avgEncPosition = (RFMotor.getCurrentPosition() - RFPreviousValue + LFMotor.getCurrentPosition() - LFPreviousValue + RBMotor.getCurrentPosition() - RBPreviousValue + LBMotor.getCurrentPosition() - LBPreviousValue) / 4;
         double difference = targetEncoderValue - avgEncPosition;
         telemetry.addData("difference", difference);
-        double power = Range.clip(difference / 500, -maxSpeed, maxSpeed);
+        double power = Range.clip(-difference / 500, -maxSpeed, maxSpeed);
+        avgEnc = avgEncPosition;
         return power;
     }
 
@@ -56,6 +62,8 @@ public class TestNewRobot extends OpMode {
         double difference = targetPosition - avgEncPosition;
         telemetry.addData("difference", difference);
         double power = Range.clip(difference / 500, -maxSpeed, maxSpeed);
+
+        avgEncSide = avgEncPosition;
         return power;
     }
 
@@ -109,10 +117,10 @@ public class TestNewRobot extends OpMode {
         RBMotor = hardwareMap.get(DcMotor.class, "RBMotor");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
-        LFMotor.setDirection(DcMotor.Direction.FORWARD);
-        RFMotor.setDirection(DcMotor.Direction.REVERSE);
-        LBMotor.setDirection(DcMotor.Direction.FORWARD);
-        RBMotor.setDirection(DcMotor.Direction.REVERSE);
+        LFMotor.setDirection(DcMotor.Direction.REVERSE);
+        RFMotor.setDirection(DcMotor.Direction.FORWARD);
+        LBMotor.setDirection(DcMotor.Direction.REVERSE);
+        RBMotor.setDirection(DcMotor.Direction.FORWARD);
 
         telemetry.addData("Status", "Initialized");
         RFMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -151,7 +159,14 @@ public class TestNewRobot extends OpMode {
     @Override
     public void loop() {
 
-        rampUp(one,0,0.5, 0.5);
+        rampUp(one,0,0.5, 0.2);
+
+        telemetry.addData("straight distance: ", avgEnc);
+        telemetry.addData("strafe distance: ", avgEncSide);
+        telemetry.addData("LF Distance", LFMotor.getCurrentPosition());
+        telemetry.addData("RF Distance", RFMotor.getCurrentPosition());
+        telemetry.addData("LB Distance", LBMotor.getCurrentPosition());
+        telemetry.addData("RB Distance", RBMotor.getCurrentPosition());
 
     }
 }
